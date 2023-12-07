@@ -21,16 +21,16 @@ namespace Hotel.Domain.Model
             _address = address;
         }
 
-        public string Email { get { return _email; } set { if (string.IsNullOrWhiteSpace(value)) throw new CustomerException("ci"); _email = value; } }
+        public string Email { get { return _email; } set { if (string.IsNullOrWhiteSpace(value)) throw new CustomerException("Fill in email"); _email = value; } }
        
         public string Phone {
             get { return _phone; }
-            set { if (string.IsNullOrWhiteSpace(value)) throw new CustomerException("cin"); _phone = value; } 
+            set { if (string.IsNullOrWhiteSpace(value)) throw new CustomerException("Fill in phone"); _phone = value; } 
         }
         
         public Address Address {
             get { return _address; }
-            set { if (value==null) throw new CustomerException("cin"); _address = value; }
+            set { if (value==null) throw new CustomerException("Fill in address"); _address = value; }
         }
     }
 }

@@ -99,5 +99,15 @@ namespace Hotel.Persistence.Repositories
             }
             catch(Exception ex) { throw new CustomerRepositoryException("addcustomer", ex); }
         }
+
+        public Customer GetCustomerById(int customerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveCustomerById(int customerId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,29 +1,32 @@
-﻿using Hotel.Domain.Repositories;
-using Hotel.Domain.Exceptions;
+﻿using Hotel.Domain.Interfaces;
 using Hotel.Domain.Model;
 using Hotel.Domain.Interfaces;
+using Hotel.Persistence.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using Hotel.Domain.Repositories;
 
-namespace Hotel.Domain.Managers
+namespace Hotel.Persistence.Repositories
 {
-    public class ActivityManager : IActivityRepository
+    public class ActivityRepository : IActivityRepository
     {
-        private readonly IActivityRepository _activityRepository;
+        private string connectionString;
 
-        public ActivityManager(IActivityRepository activityRepository)
+        public ActivityRepository(string connectionString)
         {
-            _activityRepository = activityRepository;
+            this.connectionString = connectionString;
         }
 
         public void AddActivity(Activity activity)
         {
-            _activityRepository.AddActivity(activity);
+            throw new NotImplementedException();
         }
 
         public List<Activity> GetActivities(string filter)
         {
-            return _activityRepository.GetActivities(filter);
+            throw new NotImplementedException();
         }
 
         public Activity GetActivityByActivityId(int activityId)
@@ -47,3 +50,5 @@ namespace Hotel.Domain.Managers
         }
     }
 }
+
+        

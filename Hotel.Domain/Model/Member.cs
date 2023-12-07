@@ -10,7 +10,7 @@ namespace Hotel.Domain.Model
             Birthday = birthday;
         }
         private string _name;
-        public string Name { get { return _name; } set { if (string.IsNullOrWhiteSpace(value)) throw new CustomerException("member"); _name = value; } }
+        public string Name { get { return _name; } set { if (string.IsNullOrWhiteSpace(value)) throw new CustomerException("Name is empty"); _name = value; } }
         private DateOnly _birthday;
         public DateOnly Birthday
         {
@@ -20,7 +20,7 @@ namespace Hotel.Domain.Model
             }
             set
             {
-                if (DateOnly.FromDateTime(DateTime.Now) <= value) throw new CustomerException("member");
+                if (DateOnly.FromDateTime(DateTime.Now) <= value) throw new CustomerException("bithdate is not correct");
                 _birthday = value;
             }
         }

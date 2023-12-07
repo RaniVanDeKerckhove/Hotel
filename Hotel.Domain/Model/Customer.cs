@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Hotel.Domain.Model;
 
 namespace Hotel.Domain.Model
 {
@@ -12,7 +12,8 @@ namespace Hotel.Domain.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public ContactInfo Contact { get; set; }
-        private List<Member> _members = new List<Member>(); //gn dubbels
+
+        private List<Member> _members = new List<Member>();
 
         public Customer(int id, string name, ContactInfo contact)
         {
@@ -27,20 +28,26 @@ namespace Hotel.Domain.Model
             Contact = contact;
         }
 
-        public IReadOnlyList<Member> GetMembers() { return _members.AsReadOnly(); }
+        public IReadOnlyList<Member> Members => _members.AsReadOnly();
+
         public void AddMember(Member member)
         {
             if (!_members.Contains(member))
                 _members.Add(member);
             else
-                throw new CustomerException("AddMember");
+                throw new CustomerException("Add the member");
         }
-        public void RemoveMember(Member member) 
+
+        public void RemoveMember(Member member)
         {
             if (_members.Contains(member))
                 _members.Remove(member);
             else
-                throw new CustomerException("RemoveMember");
+                throw new CustomerException("Remove the member");
+        }
+        public IReadOnlyList<Member> GetMembers()
+        {
+            return _members.AsReadOnly();
         }
     }
 }
