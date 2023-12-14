@@ -138,6 +138,11 @@ namespace Hotel.Domain.Model
                 _discount = value;
             }
         }
+
+        public DateTime StartDate { get; set; }
+        public decimal CostAdult { get; set; }
+        public decimal CostChild { get; set; }
+
         private decimal? _discount;
     }
 }

@@ -13,7 +13,11 @@ namespace Hotel.Domain.Exceptions
         {
         }
 
-        public CustomerManagerException(string? message, Exception? innerException) : base(message, innerException)
-        { }
+        public CustomerManagerException(string methodName, Exception innerException)
+                : base($"Error in {methodName} method of CustomerManager", innerException)
+            {
+            }
+        
+
     }
 }

@@ -7,10 +7,11 @@ namespace Hotel.Domain.Repositories
     public interface IActivityRepository
     {
         void AddActivity(Activity activity);
+        List<Activity> GetActivities(string filter);
+        Activity GetActivityByActivityId(int activityId);
         Activity GetActivityById(int activityId);
         List<Activity> GetAllActivities();
         void RemoveActivityById(int activityId);
-        Activity GetActivityByActivityId(int activityId);
-        List<Activity> GetActivities(string filter);
+       
     }
 }

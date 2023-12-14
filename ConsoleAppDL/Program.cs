@@ -8,14 +8,13 @@ namespace ConsoleAppDL
         static void Main(string[] args)
         {
             Console.WriteLine("Hello, World!");
-            string conn = "Data Source=NB21-6CDPYD3\\SQLEXPRESS;Initial Catalog=HotelDonderdag;Integrated Security=True";
-            CustomerRepository repo = new CustomerRepository(conn);
-            //var x = repo.GetCustomers("ge");
-            Customer c=new Customer("piet",new ContactInfo("piet@yahoo","013456",new Address("Gent","Kerkstraat","9000","185")));
-            c.AddMember(new Member("paul", new DateOnly(2000, 5, 8)));
-            c.AddMember(new Member("rudy",new DateOnly(1987,1,1)));
-            repo.AddCustomer(c);
-
+            string conn = "Data Source=MSI\\SQLEXPRESS;Initial Catalog=Hotel;Integrated Security=True";
+            RegistrationRepository repo = new RegistrationRepository(conn);
+            List<Registration> registrations = repo.GetAllRegistrations(); // Remove the argument here
+            foreach (Registration registration in registrations)
+            {
+                Console.WriteLine(registration.RegistrationId);
+            }
         }
     }
 }

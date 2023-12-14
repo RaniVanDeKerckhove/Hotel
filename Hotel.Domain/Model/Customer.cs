@@ -15,6 +15,8 @@ namespace Hotel.Domain.Model
 
         private List<Member> _members = new List<Member>();
 
+
+
         public Customer(int id, string name, ContactInfo contact)
         {
             Id = id;

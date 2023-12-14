@@ -2,10 +2,6 @@
 using Hotel.Domain.Interfaces;
 using Hotel.Domain.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Hotel.Domain.Managers
 {
@@ -18,15 +14,29 @@ namespace Hotel.Domain.Managers
             _customerRepository = customerRepository;
         }
 
-        public IReadOnlyList<Customer> GetCustomers(string filter)
+        public List<Customer> GetCustomers(string filter)
         {
             try
             {
                 return _customerRepository.GetCustomers(filter);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw new CustomerManagerException("GetCustomers");
+                // Throw the custom exception without logging
+                throw new CustomerManagerException("Error in GetCustomers method of CustomerManager", ex);
+            }
+        }
+
+        public void AddCustomer(Customer customer)
+        {
+            try
+            {
+                _customerRepository.AddCustomer(customer);
+            }
+            catch (Exception ex)
+            {
+                // Throw the custom exception without logging
+                throw new CustomerManagerException("Error in AddCustomer method of CustomerManager", ex);
             }
         }
     }
