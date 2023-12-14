@@ -1,6 +1,6 @@
-﻿using Hotel.Domain.Interfaces;
+﻿
 using Hotel.Domain.Model;
-using Hotel.Domain.Interfaces;
+
 using Hotel.Persistence.Exceptions;
 using System;
 using System.Collections.Generic;
