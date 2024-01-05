@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hotel.Domain.Repositories;
+using System;
 using System.Collections.Generic;
 
 namespace Hotel.Domain.Model
@@ -6,6 +7,13 @@ namespace Hotel.Domain.Model
     public class OrganizerManager
     {
         private List<Organizer> _organizers = new List<Organizer>();
+        private IOrganizerRepository _organizerRepository;
+
+
+        public OrganizerManager(IOrganizerRepository organizerRepository)
+        {
+            _organizerRepository = organizerRepository;
+        }
 
         // Add a new organizer to the manager
         public void AddOrganizer(Organizer organizer)

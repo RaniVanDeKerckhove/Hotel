@@ -1,4 +1,4 @@
-﻿using Hotel.Domain.Interfaces;
+﻿ using Hotel.Domain.Interfaces;
 using Hotel.Domain.Model;
 using Hotel.Persistence.Exceptions;
 using System;
@@ -105,12 +105,64 @@ namespace Hotel.Persistence.Repositories
 
         public Customer GetCustomerById(int customerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Customer customer = null;
+                string sql = "SELECT t1.Id, t1.Name AS customername, t1.ContactInfo_Email AS email, " +
+                             "t2.Email, t2.Phone, t3.City AS address_city, t3.PostalCode AS address_postalcode, " +
+                             "t3.Street AS address_street, t3.HouseNumber AS address_housenumber " +
+                             "FROM Customer t1 " +
+                             "LEFT JOIN ContactInfo t2 ON t1.ContactInfo_Email = t2.Email " +
+                             "LEFT JOIN Address t3 ON t2.Address_City = t3.City AND t2.Address_PostalCode = t3.PostalCode " +
+                             "WHERE t1.Id = @Id";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@Id", customerId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            customer = new Customer(customerId, (string)reader["customername"],
+                                new ContactInfo((string)reader["email"], (string)reader["Phone"],
+                                    new Address((string)reader["address_city"], (string)reader["address_postalcode"],
+                                        (string)reader["address_street"], (string)reader["address_housenumber"])));
+                        }
+                    }
+                }
+
+                return customer;
+            }
+            catch (Exception ex)
+            {
+                throw new CustomerRepositoryException("getcustomerbyid", ex);
+            }
         }
 
         public void RemoveCustomerById(int customerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string sql = "DELETE FROM Customer WHERE Id = @Id";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@Id", customerId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new CustomerRepositoryException("removecustomerbyid", ex);
+            }
         }
     }
 

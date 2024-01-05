@@ -27,18 +27,18 @@ namespace Hotel.Persistence.Repositories
                     connection.Open();
                     using (SqlCommand command = connection.CreateCommand())
                     {
-                        string insertQuery = "INSERT INTO Activity (Name, Description, Location, StartDate, Duration, AvailablePlaces, CostAdult, CostChild, Discount) " +
-                                             "VALUES (@Name, @Description, @Location, @StartDate, @Duration, @AvailablePlaces, @CostAdult, @CostChild, @Discount)";
+                        string insertQuery = "INSERT INTO Activity (Name, Description, Location, Date, Duration, AvailablePlaces, PriceAdult, PriceChild, Discount) " +
+                                             "VALUES (@Name, @Description, @Location, @Date, @Duration, @AvailablePlaces, @PriceAdult, @PriceChild, @Discount)";
 
                         command.CommandText = insertQuery;
                         command.Parameters.AddWithValue("@Name", activity.Name);
                         command.Parameters.AddWithValue("@Description", activity.Description);
                         command.Parameters.AddWithValue("@Location", activity.Location);
-                        command.Parameters.AddWithValue("@StartDate", activity.StartDate);
+                        command.Parameters.AddWithValue("@Date", activity.Date);
                         command.Parameters.AddWithValue("@Duration", activity.Duration);
                         command.Parameters.AddWithValue("@AvailablePlaces", activity.AvailablePlaces);
-                        command.Parameters.AddWithValue("@CostAdult", activity.CostAdult);
-                        command.Parameters.AddWithValue("@CostChild", activity.CostChild);
+                        command.Parameters.AddWithValue("@PriceAdult", activity.PriceAdult);
+                        command.Parameters.AddWithValue("@PriceChild", activity.PriceChild);
 
                         if (activity.Discount == null)
                         {
@@ -99,22 +99,158 @@ namespace Hotel.Persistence.Repositories
 
         public Activity GetActivityByActivityId(int activityId)
         {
-            throw new NotImplementedException();
+            Activity activity = null;
+
+            string query = "SELECT * FROM Activity WHERE Id = @Id";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(databaseConnectionString))
+                {
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Id", activityId);
+                    connection.Open();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (reader["Discount"] == DBNull.Value)
+                        {
+                            activity = new Activity((int)reader["Id"], (string)reader["Name"],
+                                (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
+                                (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
+                                (decimal)reader["PriceChild"], 0, (string)reader["Location"]);
+
+                        }
+                        else
+                        {
+                            activity = new Activity((int)reader["Id"], (string)reader["Name"],
+                                (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
+                                (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
+                                (decimal)reader["PriceChild"], (decimal)reader["Discount"], (string)reader["Location"]);
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+
+            return activity;
         }
 
         public Activity GetActivityById(int activityId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Activity activity = null;
+                string sql = "SELECT * FROM Activity WHERE Id = @Id";
+
+                using (SqlConnection conn = new SqlConnection(databaseConnectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@Id", activityId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader["Discount"] == DBNull.Value)
+                            {
+                                activity = new Activity(activityId, (string)reader["Name"],
+                                    (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
+                                    (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
+                                    (decimal)reader["PriceChild"], 0, (string)reader["Location"]);
+
+                            }
+                            else
+                            {
+                                activity = new Activity(activityId, (string)reader["Name"],
+                                    (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
+                                    (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
+                                    (decimal)reader["PriceChild"], (decimal)reader["Discount"],
+                                    (string)reader["Location"]);
+                            }
+                        }
+                    }
+                }
+
+                return activity;
+            }
+            catch (Exception ex)
+            {
+                throw new ActivityRepositoryException("getactivitybyid", ex);
+            }                               
         }
 
         public List<Activity> GetAllActivities()
         {
-            throw new NotImplementedException();
+            List<Activity> activities = new List<Activity>();
+
+            string query = "SELECT * FROM Activity";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(databaseConnectionString))
+                {
+                    SqlCommand command = new SqlCommand(query, connection);
+                    connection.Open();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Activity activity;
+                        if (reader["Discount"] == DBNull.Value)
+                        {
+                            activity = new Activity((int)reader["Id"], (string)reader["Name"],
+                                (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
+                                (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
+                                (decimal)reader["PriceChild"], 0, (string)reader["Location"]);
+
+                        }
+                        else
+                        {
+                            activity = new Activity((int)reader["Id"], (string)reader["Name"],
+                                (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
+                                (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
+                                (decimal)reader["PriceChild"], (decimal)reader["Discount"], (string)reader["Location"]);
+                        }
+
+                        activities.Add(activity);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+
+            return activities;
         }
 
         public void RemoveActivityById(int activityId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(databaseConnectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand command = connection.CreateCommand())
+                    {
+                        string deleteQuery = "DELETE FROM Activity WHERE Id = @Id";
+
+                        command.CommandText = deleteQuery;
+                        command.Parameters.AddWithValue("@Id", activityId);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ActivityRepositoryException($"Error deleting activity: {ex.Message}", ex);
+            }
         }
     }
 

@@ -13,10 +13,12 @@ namespace Hotel.Domain.Model
         public string Name { get; set; }
         public ContactInfo Contact { get; set; }
 
-        private List<Member> _members = new List<Member>();
+        public List<Member> _members = new List<Member>();
 
 
-
+        public Customer()
+        {
+        }
         public Customer(int id, string name, ContactInfo contact)
         {
             Id = id;

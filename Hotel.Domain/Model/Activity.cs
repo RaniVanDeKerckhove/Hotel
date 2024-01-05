@@ -8,7 +8,8 @@ namespace Hotel.Domain.Model
     {
         public Activity(int id, string name, string description, DateTime date, int duration, int availablePlaces, decimal priceAdult, decimal priceChild, decimal discount, string location)
         {
-            Id = id;
+            Id = id; // Directly set the private field
+
             Name = name;
             Description = description;
             Date = date;
@@ -20,17 +21,34 @@ namespace Hotel.Domain.Model
             Location = location;
         }
 
-        public int Id
+        public Activity(string name, string description, DateTime date, int duration, int availablePlaces, decimal priceAdult, decimal priceChild, decimal discount, string location)
         {
-            get => _id;
-            set
-            {
-                if (value <= 0)
-                    throw new ActivityException("Invalid ID");
-                _id = value;
-            }
+         
+
+            Name = name;
+            Description = description;
+            Date = date;
+            Duration = duration;
+            AvailablePlaces = availablePlaces;
+            PriceAdult = priceAdult;
+            PriceChild = priceChild;
+            Discount = discount;
+            Location = location;
         }
-        private int _id;
+        public int Id { get; set; }
+
+        //public int Id
+        //{
+        //    get => _id;
+        //    set
+        //    {
+        //        if (value <= 0)
+        //            throw new ActivityException("Invalid ID");
+        //        _id = value;
+        //    }
+        //}
+        //private int _id;
+
 
         public string Name
         {
@@ -139,9 +157,7 @@ namespace Hotel.Domain.Model
             }
         }
 
-        public DateTime StartDate { get; set; }
-        public decimal CostAdult { get; set; }
-        public decimal CostChild { get; set; }
+        
 
         private decimal? _discount;
     }

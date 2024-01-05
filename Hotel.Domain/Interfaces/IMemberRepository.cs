@@ -10,6 +10,5 @@ namespace Hotel.Domain.Repositories
         Member GetMemberByName(string memberName);
         List<Member> GetAllMembers();
         void RemoveMemberByName(string memberName);
-        // Additional methods for member repository can be added as needed
     }
 }

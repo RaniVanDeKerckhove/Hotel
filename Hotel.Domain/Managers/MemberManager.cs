@@ -1,11 +1,28 @@
-﻿using System;
+﻿using Hotel.Domain.Repositories;
+using System;
 using System.Collections.Generic;
 
 namespace Hotel.Domain.Model
 {
     public class MemberManager
     {
+
         private List<Member> _members = new List<Member>();
+
+     
+
+
+        // Constructor that takes a repository
+        public MemberManager(IMemberRepository memberRepository)
+        {
+            _members = memberRepository.GetAllMembers();
+        }
+        // Retrieve a member by ID
+        public List<Member> GetMembersByCustomerId(int customerId)
+        {
+            return _members.Where(member => member.CustomerId == customerId).ToList();
+        }
+
 
         // Add a new member to the manager
         public void AddMember(Member member)

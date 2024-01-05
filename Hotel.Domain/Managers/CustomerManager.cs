@@ -39,5 +39,20 @@ namespace Hotel.Domain.Managers
                 throw new CustomerManagerException("Error in AddCustomer method of CustomerManager", ex);
             }
         }
+
+        public void RemoveCustomerById(int customerId)
+        {
+            try
+            {
+                _customerRepository.RemoveCustomerById(customerId);
+            }
+            catch (Exception ex)
+            {
+                // Throw the custom exception without logging
+                throw new CustomerManagerException("Error in RemoveCustomerById method of CustomerManager", ex);
+            }
+        }
+
+
     }
 }

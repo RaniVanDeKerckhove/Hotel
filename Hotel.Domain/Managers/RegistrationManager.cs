@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hotel.Domain.Repositories;
+using System;
 using System.Collections.Generic;
 
 namespace Hotel.Domain.Model
@@ -6,6 +7,12 @@ namespace Hotel.Domain.Model
     public class RegistrationManager
     {
         private List<Registration> _registrations = new List<Registration>();
+
+        // Constructor that takes a repository
+        public RegistrationManager(IRegistrationRepository registrationRepository)
+        {
+            _registrations = registrationRepository.GetAllRegistrations();
+        }
 
         // Add a new registration to the manager
         public void AddRegistration(Registration registration)

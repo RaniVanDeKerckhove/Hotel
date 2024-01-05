@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using Hotel.Domain.Model; // Update with your actual namespace
 using Hotel.Domain.Repositories;
+using Hotel.Persistence.Exceptions;
 
 namespace Hotel.Persistence.Repositories
 {
@@ -71,12 +72,73 @@ namespace Hotel.Persistence.Repositories
 
         public Organizer GetOrganizerById(int organizerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Organizer organizer = null;
+                string sql = "SELECT o.[OrganizerId], o.[Name], ci.[Email], ci.[Phone], " +
+                             "a.[City], a.[PostalCode], a.[Street], a.[HouseNumber] " +
+                             "FROM [Hotel].[dbo].[Organizer] o " +
+                             "INNER JOIN [Hotel].[dbo].[ContactInfo] ci ON o.[ContactInfo_Email] = ci.[Email] " +
+                             "INNER JOIN [Hotel].[dbo].[Address] a ON ci.[Address_City] = a.[City] " +
+                             "WHERE o.[OrganizerId] = @organizerId";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@organizerId", organizerId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            organizer = new Organizer(
+                                organizerId: Convert.ToInt32(reader["OrganizerId"]),
+                                name: reader["Name"].ToString(),
+                                contactInfo: new ContactInfo(
+                                    email: reader["Email"].ToString(),
+                                    phone: reader["Phone"].ToString(),
+                                    address: new Address(
+                                        city: reader["City"].ToString(),
+                                        postalCode: reader["PostalCode"].ToString(),
+                                        street: reader["Street"].ToString(),
+                                        houseNumber: reader["HouseNumber"].ToString()
+                                    )
+                                )
+                            );
+                        }
+                    }
+                }
+
+                return organizer;
+            }
+            catch (Exception ex)
+            {
+                throw new OrganizerRepositoryException("getorganizer", ex);
+            }   
         }
 
         public void RemoveOrganizerById(int organizerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string sql = "DELETE FROM Organizer WHERE OrganizerId = @organizerId";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@organizerId", organizerId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+               throw new OrganizerRepositoryException("removeorganizer", ex);
+           }
         }
     }
 }

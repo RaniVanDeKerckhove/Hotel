@@ -26,7 +26,10 @@ namespace Hotel.Presentation.Customer.Model
             Address = address;
             Phone = phone;
             NrOfMembers = nrOfMembers;
+
         }
+        public List<MemberUI> _members { get; set; }
+
 
         public int? Id { get; set; }
         private string _name;
@@ -37,10 +40,18 @@ namespace Hotel.Presentation.Customer.Model
         private string _phone;
         public string Phone { get { return _phone; } set {_phone=value; OnPropertyChanged();} }
         public int NrOfMembers { get; set; }
+
+
+        public string Municipality { get; private set; }
+        public string ZipCode { get; private set; }
+        public string HouseNumber { get; private set; }
+        public string Street { get; private set; }
         private void OnPropertyChanged(string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        
     }
 }

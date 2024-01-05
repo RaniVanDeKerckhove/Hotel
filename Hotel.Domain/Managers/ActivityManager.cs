@@ -28,22 +28,22 @@ namespace Hotel.Domain.Managers
 
         public Activity GetActivityByActivityId(int activityId)
         {
-            throw new NotImplementedException();
+            return _activityRepository.GetActivityByActivityId(activityId);
         }
 
         public Activity GetActivityById(int activityId)
         {
-            throw new NotImplementedException();
+            return _activityRepository.GetActivityById(activityId);
         }
 
         public List<Activity> GetAllActivities()
         {
-            throw new NotImplementedException();
+            return _activityRepository.GetAllActivities();
         }
 
         public void RemoveActivityById(int activityId)
         {
-            throw new NotImplementedException();
+            _activityRepository.RemoveActivityById(activityId);
         }
     }
 }

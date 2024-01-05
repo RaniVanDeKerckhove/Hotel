@@ -20,24 +20,35 @@ using System.Windows.Shapes;
 
 namespace Hotel.Presentation.Customer
 {
-    /// <summary>
-    /// Interaction logic for CustomerWindow.xaml
-    /// </summary>
     public partial class CustomerWindow : Window
     {
+        // Add this line at the beginning of your class
         public CustomerUI CustomerUI { get; set; }
+
         private CustomerManager customerManager;
-        public CustomerWindow(CustomerUI customerUI)
+        private MemberManager memberManager;
+        private CustomerUI customerUI;
+        private bool isUpdate;
+
+        public CustomerWindow(bool isUpdate, CustomerUI customerUI)
         {
             InitializeComponent();
             customerManager = new CustomerManager(RepositoryFactory.CustomerRepository);
-            this.CustomerUI = customerUI;
-            if (CustomerUI != null)
+            memberManager = new MemberManager(RepositoryFactory.MemberRepository);
+            this.customerUI = customerUI;
+            this.isUpdate = isUpdate;
+            if (isUpdate == false) MemberDataGrid.ContextMenu.IsEnabled = false;
+            if (customerUI != null)
             {
-                IdTextBox.Text = CustomerUI.Id.ToString();
-                NameTextBox.Text = CustomerUI.Name;
-                EmailTextBox.Text = CustomerUI.Email;
-                PhoneTextBox.Text = CustomerUI.Phone;
+                MemberDataGrid.ItemsSource = customerUI._members;
+                IdTextBox.Text = customerUI.Id.ToString();
+                NameTextBox.Text = customerUI.Name;
+                EmailTextBox.Text = customerUI.Email;
+                PhoneTextBox.Text = customerUI.Phone;
+                CityTextBox.Text = customerUI.Municipality;
+                ZipTextBox.Text = customerUI.ZipCode;
+                HouseNumberTextBox.Text = customerUI.HouseNumber;
+                StreetTextBox.Text = customerUI.Street;
             }
         }
 
@@ -45,6 +56,7 @@ namespace Hotel.Presentation.Customer
         {
             Close();
         }
+
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -56,14 +68,11 @@ namespace Hotel.Presentation.Customer
                     ContactInfo ContactInfo = new ContactInfo(EmailTextBox.Text, PhoneTextBox.Text, address);
                     Hotel.Domain.Model.Customer customer = new Hotel.Domain.Model.Customer(NameTextBox.Text, ContactInfo);
 
+                    // Pass an empty list as the last parameter for the constructor
                     CustomerUI = new CustomerUI(NameTextBox.Text, EmailTextBox.Text, address.ToString(), PhoneTextBox.Text, 0);
 
                     // Add to DB
                     customerManager.AddCustomer(customer);
-
-
-
-                    
                 }
                 else
                 {
@@ -84,6 +93,7 @@ namespace Hotel.Presentation.Customer
                 MessageBox.Show($"Error adding/updating customer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
     }
+
+
 }
