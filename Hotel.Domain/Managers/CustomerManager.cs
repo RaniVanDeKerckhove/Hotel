@@ -40,6 +40,26 @@ namespace Hotel.Domain.Managers
             }
         }
 
+        public void UpdateCustomer(Customer customer)
+        {
+            try
+            {
+                // Validate customer parameter
+                if (customer == null)
+                {
+                    throw new ArgumentNullException(nameof(customer), "Customer cannot be null.");
+                }
+
+                _customerRepository.UpdateCustomer(customer);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception appropriately
+                throw new CustomerManagerException("Error in UpdateCustomer method of CustomerManager", ex);
+            }
+        }
+
+
         public void RemoveCustomerById(int customerId)
         {
             try
@@ -52,7 +72,18 @@ namespace Hotel.Domain.Managers
                 throw new CustomerManagerException("Error in RemoveCustomerById method of CustomerManager", ex);
             }
         }
-
+        public Customer GetCustomerById(int customerId)
+        {
+            try
+            {
+                return _customerRepository.GetCustomerById(customerId);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception appropriately
+                throw new CustomerManagerException("Error in GetCustomerById method of CustomerManager", ex);
+            }
+        }
 
     }
 }

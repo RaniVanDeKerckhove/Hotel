@@ -57,7 +57,7 @@ namespace Hotel.Presentation.Organizer
 
                 // Create the new Activity object
                 // Adjust the constructor parameters based on your Activity class
-                Activity newActivity = new Activity(0, name, description, date, duration, availablePlaces, priceAdult, priceChild, discount, location);
+                Activity newActivity = new Activity( name, description, date, duration, availablePlaces, priceAdult, priceChild, discount, location);
 
                 // Add your logic to save the new activity to the database or perform other actions
                 activityManager.AddActivity(newActivity);

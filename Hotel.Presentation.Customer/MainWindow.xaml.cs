@@ -97,7 +97,7 @@ namespace Hotel.Presentation.Customer
             Refresh();
         }
 
-            public void GetDatabaseInfo()
+        public void GetDatabaseInfo()
         {
             foreach (Domain.Model.Customer c in customerManager.GetCustomers(null))
             {
@@ -123,6 +123,6 @@ namespace Hotel.Presentation.Customer
             };
         }
 
-    
+
     }
 }

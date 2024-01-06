@@ -35,21 +35,16 @@ namespace Hotel.Presentation.Customer
             InitializeComponent();
             customerManager = new CustomerManager(RepositoryFactory.CustomerRepository);
             memberManager = new MemberManager(RepositoryFactory.MemberRepository);
-            this.customerUI = customerUI;
-            this.isUpdate = isUpdate;
-            if (isUpdate == false) MemberDataGrid.ContextMenu.IsEnabled = false;
-            if (customerUI != null)
+            InitializeComponent();
+            this.CustomerUI = customerUI;
+            if (CustomerUI != null)
             {
-                MemberDataGrid.ItemsSource = customerUI._members;
-                IdTextBox.Text = customerUI.Id.ToString();
-                NameTextBox.Text = customerUI.Name;
-                EmailTextBox.Text = customerUI.Email;
-                PhoneTextBox.Text = customerUI.Phone;
-                CityTextBox.Text = customerUI.Municipality;
-                ZipTextBox.Text = customerUI.ZipCode;
-                HouseNumberTextBox.Text = customerUI.HouseNumber;
-                StreetTextBox.Text = customerUI.Street;
+                IdTextBox.Text = CustomerUI.Id.HasValue ? CustomerUI.Id.ToString() : string.Empty;
+                NameTextBox.Text = CustomerUI.Name;
+                EmailTextBox.Text = CustomerUI.Email;
+                PhoneTextBox.Text = CustomerUI.Phone;
             }
+
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -65,8 +60,8 @@ namespace Hotel.Presentation.Customer
                 {
                     // New customer
                     Address address = new Address(CityTextBox.Text, StreetTextBox.Text, ZipTextBox.Text, HouseNumberTextBox.Text);
-                    ContactInfo ContactInfo = new ContactInfo(EmailTextBox.Text, PhoneTextBox.Text, address);
-                    Hotel.Domain.Model.Customer customer = new Hotel.Domain.Model.Customer(NameTextBox.Text, ContactInfo);
+                    ContactInfo contactInfo = new ContactInfo(EmailTextBox.Text, PhoneTextBox.Text, address);
+                    Hotel.Domain.Model.Customer customer = new Hotel.Domain.Model.Customer(NameTextBox.Text, contactInfo);
 
                     // Pass an empty list as the last parameter for the constructor
                     CustomerUI = new CustomerUI(NameTextBox.Text, EmailTextBox.Text, address.ToString(), PhoneTextBox.Text, 0);
@@ -82,6 +77,26 @@ namespace Hotel.Presentation.Customer
                     CustomerUI.Phone = PhoneTextBox.Text;
                     CustomerUI.Name = NameTextBox.Text;
                     // Update additional properties from CustomerUI if any
+
+                    // Get the customer from the database using its ID
+                    Hotel.Domain.Model.Customer existingCustomer = customerManager.GetCustomerById(CustomerUI.Id.Value);
+
+                    if (existingCustomer != null)
+                    {
+                        // Update the existing customer's properties
+                        existingCustomer.Name = NameTextBox.Text;
+                        existingCustomer.Contact.Email = EmailTextBox.Text;
+                        existingCustomer.Contact.Phone = PhoneTextBox.Text;
+                        // Update additional properties from CustomerUI if any
+
+                        // Save the changes to the database
+                        customerManager.UpdateCustomer(existingCustomer);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Customer not found in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                 }
 
                 DialogResult = true;
@@ -93,6 +108,8 @@ namespace Hotel.Presentation.Customer
                 MessageBox.Show($"Error adding/updating customer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
     }
 
 

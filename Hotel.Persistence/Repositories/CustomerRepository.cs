@@ -1,4 +1,4 @@
-﻿ using Hotel.Domain.Interfaces;
+﻿using Hotel.Domain.Interfaces;
 using Hotel.Domain.Model;
 using Hotel.Persistence.Exceptions;
 using System;
@@ -54,9 +54,17 @@ namespace Hotel.Persistence.Repositories
                             if (!customers.ContainsKey(id))
                             {
                                 Customer customer = new Customer(id, (string)reader["customername"],
-                                    new ContactInfo((string)reader["email"], (string)reader["Phone"],
-                                        new Address((string)reader["address_city"], (string)reader["address_postalcode"],
-                                            (string)reader["address_street"], (string)reader["address_housenumber"])));
+                                    new ContactInfo(
+                                        reader["email"] == DBNull.Value ? string.Empty : (string)reader["email"],
+                                        reader["Phone"] == DBNull.Value ? string.Empty : (string)reader["Phone"],
+                                        new Address(
+                                            reader["address_city"] == DBNull.Value ? string.Empty : (string)reader["address_city"],
+                                            reader["address_postalcode"] == DBNull.Value ? string.Empty : (string)reader["address_postalcode"],
+                                            reader["address_street"] == DBNull.Value ? string.Empty : (string)reader["address_street"],
+                                            reader["address_housenumber"] == DBNull.Value ? string.Empty : (string)reader["address_housenumber"]
+                                        )
+                                    )
+                                );
                                 customers.Add(id, customer);
                             }
                         }
@@ -70,6 +78,7 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("getcustomer", ex);
             }
         }
+
 
         public void AddCustomer(Customer customer)
         {
@@ -164,6 +173,50 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("removecustomerbyid", ex);
             }
         }
+
+        public void UpdateCustomer(Customer customer)
+        {
+            try
+            {
+                // Validate customer parameter
+                if (customer == null)
+                {
+                    throw new ArgumentNullException(nameof(customer), "Customer cannot be null.");
+                }
+
+                string sql =
+                    "UPDATE Customer SET Name = @Name, ContactInfo_Email = @Email, ContactInfo_Phone = @Phone, " +
+                    "Address_City = @City, Address_PostalCode = @PostalCode, Address_Street = @Street, Address_HouseNumber = @HouseNumber, " +
+                    "Status = @Status " + // Include all other properties you want to update
+                    "WHERE Id = @Id";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+
+                    // Add parameters
+                    cmd.Parameters.AddWithValue("@Id", customer.Id);
+                    cmd.Parameters.AddWithValue("@Name", customer.Name);
+                    cmd.Parameters.AddWithValue("@Email", customer.Contact.Email);
+                    cmd.Parameters.AddWithValue("@Phone", customer.Contact.Phone);
+                    cmd.Parameters.AddWithValue("@City", customer.Contact.Address.City);
+                    cmd.Parameters.AddWithValue("@PostalCode", customer.Contact.Address.PostalCode);
+                    cmd.Parameters.AddWithValue("@Street", customer.Contact.Address.Street);
+                    cmd.Parameters.AddWithValue("@HouseNumber", customer.Contact.Address.HouseNumber);
+                    cmd.Parameters.AddWithValue("@Status", customer.Status); // Add other properties as needed
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception appropriately
+                throw new CustomerRepositoryException("updatecustomer", ex);
+            }
+        }
+
     }
 
 }

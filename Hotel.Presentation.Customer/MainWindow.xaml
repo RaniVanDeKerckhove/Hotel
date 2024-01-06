@@ -16,12 +16,13 @@
         </Grid.ColumnDefinitions>
         <TextBox Grid.Row="0" Grid.Column="0" Name="SearchTextBox" Margin="5"/>
         <Button Grid.Row="0" Grid.Column="1" Name="SearchButton" Margin="5" Content="Search"  Background="#4CAF50" Foreground="White" FontSize="12" Click="SearchButton_Click"/>
-        <DataGrid Name="CustomerDataGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" IsReadOnly="True" >
+
+        <DataGrid Name="CustomerDataGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10,5,42" IsReadOnly="True">
             <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Add" Click="MenuItemAddCustomer_Click"></MenuItem>
-                    <MenuItem Header="Delete" Click="MenuItemDeleteCustomer_Click"></MenuItem>
-                    <MenuItem Header="Update" Click="MenuItemUpdateCustomer_Click"></MenuItem>
+                <ContextMenu PlacementTarget="{Binding PlacementTarget, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}">
+                    <MenuItem Header="Add" Click="MenuItemAddCustomer_Click"/>
+                    <MenuItem Header="Delete" Click="MenuItemDeleteCustomer_Click"/>
+                    <MenuItem Header="Update" Click="MenuItemUpdateCustomer_Click"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
