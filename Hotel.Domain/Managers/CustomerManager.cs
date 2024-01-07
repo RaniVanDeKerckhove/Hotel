@@ -26,7 +26,6 @@ namespace Hotel.Domain.Managers
                 throw new CustomerManagerException("Error in GetCustomers method of CustomerManager", ex);
             }
         }
-
         public List<Customer> GetAllCustomers()
         {
             try
@@ -39,6 +38,7 @@ namespace Hotel.Domain.Managers
                 throw new CustomerManagerException("Error in GetAllCustomers method of CustomerManager", ex);
             }
         }
+
 
         public void AddCustomer(Customer customer)
         {

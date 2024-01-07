@@ -10,11 +10,26 @@ namespace Hotel.Presentation.Customer.Model
         {
             Name = name;
             Email = email;
-            Address = address;
+            SplitAddress(address);
             Phone = phone;
             NrOfMembers = nrOfMembers;
             _members = new List<MemberUI>();
         }
+        private const char splitChar = '-';
+
+        public void SplitAddress(string addressLine)
+        {
+            string[] parts = addressLine.Split(splitChar);
+            Municipality = parts[0];
+            Street = parts[2];
+            ZipCode = parts[1];
+            HouseNumber = parts[3];
+        }
+
+        public CustomerUI()
+        {
+        }
+
 
         public CustomerUI(int? id, string name, string email, string address, string phone, int nrOfMembers)
             : this(name, email, address, phone, nrOfMembers)

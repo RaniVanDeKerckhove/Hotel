@@ -42,6 +42,11 @@ namespace Hotel.Presentation.Customer
                 NameTextBox.Text = CustomerUI.Name;
                 EmailTextBox.Text = CustomerUI.Email;
                 PhoneTextBox.Text = CustomerUI.Phone;
+                CityTextBox.Text = CustomerUI.Municipality;
+                ZipTextBox.Text = CustomerUI.ZipCode;
+                StreetTextBox.Text = CustomerUI.Street;
+                HouseNumberTextBox.Text = CustomerUI.HouseNumber;
+
             }
         }
 

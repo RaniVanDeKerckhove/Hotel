@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hotel.Presentation.Organize
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hotel.Presentation.Register", "Hotel.Presentation.Register\Hotel.Presentation.Register.csproj", "{0422CBD7-A787-4032-86A7-B7DE496E8156}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{7609E557-35D2-419A-BE29-F589288F5337}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{0422CBD7-A787-4032-86A7-B7DE496E8156}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0422CBD7-A787-4032-86A7-B7DE496E8156}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0422CBD7-A787-4032-86A7-B7DE496E8156}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7609E557-35D2-419A-BE29-F589288F5337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7609E557-35D2-419A-BE29-F589288F5337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7609E557-35D2-419A-BE29-F589288F5337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7609E557-35D2-419A-BE29-F589288F5337}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

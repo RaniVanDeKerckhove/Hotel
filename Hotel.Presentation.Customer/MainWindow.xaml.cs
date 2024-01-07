@@ -38,8 +38,8 @@ namespace Hotel.Presentation.Customer
                     c.Id,
                     c.Name,
                     c.Email,
-                    c.PhoneNumber,
                     c.Address.ToString(),
+                    c.PhoneNumber,
                     c.Members.Count
                 ));
 
@@ -102,13 +102,17 @@ namespace Hotel.Presentation.Customer
             foreach (Domain.Model.Customer c in customerManager.GetCustomers(null))
             {
                 List<MemberUI> membersUI = new List<MemberUI>();
-                foreach (Member m in c.GetMembers())
+                if (c.Members != null)
                 {
-                    membersUI.Add(new MemberUI(m.Name, m.Birthday));
+                    foreach (Member m in c.Members)
+                    {
+                        membersUI.Add(new MemberUI(m.Name, m.Birthday));
+                    }
                 }
-                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, c.PhoneNumber, c.Address.ToString(), c.Members.Count));
+                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, c.Address.ToString(), c.PhoneNumber,  membersUI.Count));
             }
         }
+
 
         public void Refresh()
         {

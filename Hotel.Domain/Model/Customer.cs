@@ -28,6 +28,15 @@ namespace Hotel.Domain.Model
             PhoneNumber = phoneNumber;
             Email = email;
         }
+        public Customer(int id, string name, Address address, string phoneNumber, string email, bool status)
+        {
+            Id = id;
+            Name = name;
+            Address = address;
+            PhoneNumber = phoneNumber;
+            Email = email;
+            Status = status;
+        }
 
         public Customer(string name, string phoneNumber, string email, Address address)
         {

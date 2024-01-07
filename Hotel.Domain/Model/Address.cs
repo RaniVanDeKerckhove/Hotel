@@ -43,7 +43,7 @@ namespace Hotel.Domain.Model
 
         public override string ToString()
         {
-            return $"{City} [{PostalCode}] - {Street} - {HouseNumber}";
+            return $"{City} - {PostalCode} - {Street} - {HouseNumber}";
         }
         public string ToAddressLine()
         {

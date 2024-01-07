@@ -22,7 +22,10 @@ namespace Hotel.Persistence.Repositories
             try
             {
                 List<Customer> customers = new List<Customer>();
-                string sql = "SELECT Id, Name AS customername, Email, PhoneNumber, Address_City, Address_PostalCode, Address_Street, Address_HouseNumber FROM Customer WHERE Id IS NOT NULL";
+                string sql = "SELECT Id, Name AS customername, Email, PhoneNumber, " +
+                             "Address_City, Address_PostalCode, Address_Street, Address_HouseNumber " +
+                             "FROM Customer " +
+                             "WHERE Id IS NOT NULL AND Status = 1";
 
                 if (!string.IsNullOrWhiteSpace(filter))
                 {
@@ -109,7 +112,10 @@ namespace Hotel.Persistence.Repositories
             try
             {
                 Customer customer = null;
-                string sql = "SELECT t1.Id, t1.Name AS customername, t1.Email, t1.PhoneNumber AS phone, t1.Address_City AS address_city, t1.Address_PostalCode AS address_postalcode, t1.Address_Street AS address_street, t1.Address_HouseNumber AS address_housenumber FROM Customer t1 LEFT JOIN Address t3 ON t1.Address_City = t3.Ci\r\n";
+                string sql = "SELECT [Id], [Name], [PhoneNumber], [Email], " +
+                             "[Address_City], [Address_Street], [Address_PostalCode], [Address_HouseNumber] " +
+                             "FROM [HotelDB].[dbo].[Customer] " +
+                             "WHERE [Id] = @Id";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = conn.CreateCommand())
@@ -122,19 +128,18 @@ namespace Hotel.Persistence.Repositories
                     {
                         while (reader.Read())
                         {
-                            // Update this part
                             customer = new Customer(
-                                id: Convert.ToInt32(reader["Id"]),
-                                name: reader["customername"].ToString(),
-                                address: new Address(
-                                    city: reader["address_city"].ToString(),
-                                    postalCode: reader["address_postalcode"].ToString(),
-                                    street: reader["address_street"].ToString(),
-                                    houseNumber: reader["address_housenumber"].ToString()
-                                ),
-                                phoneNumber: reader["Phone"].ToString(),
-                                email: reader["Email"].ToString()
-                            );
+                                    id: Convert.ToInt32(reader["Id"]),
+                                    name: reader["Name"].ToString(),
+                                    address: new Address(
+                                        city: reader["Address_City"].ToString(),
+                                        postalCode: reader["Address_PostalCode"].ToString(),
+                                        street: reader["Address_Street"].ToString(),
+                                        houseNumber: reader["Address_HouseNumber"].ToString()
+                                    ),
+                                    phoneNumber: reader["PhoneNumber"].ToString(),
+                                    email: reader["Email"].ToString());
+
                         }
                     }
                 }
@@ -146,23 +151,70 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("getcustomerbyid", ex);
             }
         }
-        // get all customers
+
+        public void RemoveCustomerById(int customerId)
+        {
+            try
+            {
+                string sql = "UPDATE Customer SET Status = 0 WHERE Id = @Id";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@Id", customerId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new CustomerRepositoryException("updatecustomerstatusbyid", ex);
+            }
+        }
+
+        public void UpdateCustomer(Customer customer)
+        {
+            try
+            {
+                string sql =
+                    "UPDATE Customer SET Name = @Name, Email = @Email, PhoneNumber = @Phone, " +
+                    "Address_City = @City, Address_PostalCode = @PostalCode, Address_Street = @Street, Address_HouseNumber = @HouseNumber " +
+                    "WHERE Id = @Id";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+
+                    // Add parameters
+                    cmd.Parameters.AddWithValue("@Id", customer.Id);
+                    cmd.Parameters.AddWithValue("@Name", customer.Name);
+                    cmd.Parameters.AddWithValue("@Email", customer.Email);
+                    cmd.Parameters.AddWithValue("@Phone", customer.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@City", customer.Address.City);
+                    cmd.Parameters.AddWithValue("@PostalCode", customer.Address.PostalCode);
+                    cmd.Parameters.AddWithValue("@Street", customer.Address.Street);
+                    cmd.Parameters.AddWithValue("@HouseNumber", customer.Address.HouseNumber);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new CustomerRepositoryException("updatecustomer", ex);
+            }
+        }
+
         public List<Customer> GetAllCustomers()
         {
             try
             {
                 List<Customer> customers = new List<Customer>();
-                string sql = "SELECT  " +
-                             "[Id], " +
-                             "[Name], " +
-                             "[PhoneNumber], " +
-                             "[Email], " +
-                             "[Status], " +
-                             "[Address_City], " +
-                             "[Address_Street], " +
-                             "[Address_PostalCode], " +
-                             "[Address_HouseNumber] " +
-                             "FROM [HotelDB].[dbo].[Customer];"; ;
+                string sql = "SELECT [Id], [Name], [PhoneNumber], [Email], [Address_City], [Address_PostalCode], [Address_Street], [Address_HouseNumber], [Status], [nrOfMembers] FROM [HotelDB].[dbo].[Customer]";
+
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = conn.CreateCommand())
@@ -200,63 +252,5 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("getallcustomers", ex);
             }
         }
-
-
-
-        public void RemoveCustomerById(int customerId)
-        {
-            try
-            {
-                string sql = "DELETE FROM Customer WHERE Id = @Id";
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@Id", customerId);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new CustomerRepositoryException("removecustomerbyid", ex);
-            }
-        }
-        public void UpdateCustomer(Customer customer)
-        {
-            try
-            {
-                string sql =
-                    "UPDATE Customer SET Name = @Name, ContactInfo_Email = @Email, ContactInfo_Phone = @Phone, " +
-                    "Address_City = @City, Address_PostalCode = @PostalCode, Address_Street = @Street, Address_HouseNumber = @HouseNumber " +
-                    "WHERE Id = @Id";
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-
-                    // Add parameters
-                    cmd.Parameters.AddWithValue("@Id", customer.Id);
-                    cmd.Parameters.AddWithValue("@Name", customer.Name);
-                    cmd.Parameters.AddWithValue("@Email", customer.Email);
-                    cmd.Parameters.AddWithValue("@Phone", customer.PhoneNumber);
-                    cmd.Parameters.AddWithValue("@City", customer.Address.City);
-                    cmd.Parameters.AddWithValue("@PostalCode", customer.Address.PostalCode);
-                    cmd.Parameters.AddWithValue("@Street", customer.Address.Street);
-                    cmd.Parameters.AddWithValue("@HouseNumber", customer.Address.HouseNumber);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new CustomerRepositoryException("updatecustomer", ex);
-            }
-        }
     }
 }
-   
