@@ -109,9 +109,56 @@ namespace Hotel.Presentation.Customer
                         membersUI.Add(new MemberUI(m.Name, m.Birthday));
                     }
                 }
-                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, c.Address.ToString(), c.PhoneNumber,  membersUI.Count));
+                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, c.Address.ToString(), c.PhoneNumber, c.NrOfMembers));
             }
         }
+        private void AddMemberButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Ensure a customer is selected
+            if (CustomerDataGrid.SelectedItem != null)
+            {
+                // Get the selected customer
+                CustomerUI selectedCustomer = (CustomerUI)CustomerDataGrid.SelectedItem;
+
+                // Open the MemberWindow to add a new member
+                MemberWindow memberWindow = new MemberWindow();
+                if (memberWindow.ShowDialog() == true)
+                {
+                    // Extract DateTime value from the DatePicker
+                    DateTime selectedDate = memberWindow.DatePicker.SelectedDate.GetValueOrDefault();
+
+                   
+                    // Create a new Member object
+                    Member newMember = new Member(
+                                               memberWindow.NameTextBox.Text,
+                                                                      DateOnly.FromDateTime(selectedDate)
+                                                                  );
+
+                    try
+                    {
+                        // Add the new member to the selected customer
+                        customerManager.AddMemberToCustomer(selectedCustomer.Id ?? 0, newMember);
+
+                        // Refresh the UI to reflect the changes
+                        GetDatabaseInfo();
+                        Refresh();
+                    }
+                    catch (CustomerManagerException ex)
+                    {
+                        // Handle the exception or display an error message
+                        MessageBox.Show($"Error adding member: {ex.Message}", "Error");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a customer before adding a member.", "Add Member");
+            }
+        }
+
+
+
+
 
 
         public void Refresh()

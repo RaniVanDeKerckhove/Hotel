@@ -59,43 +59,101 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        //public List<Activity> GetActivities(string filter)
+        //{
+        //    List<Activity> activities = new List<Activity>();
+
+        //    string query = "SELECT * FROM Activity";
+        //    try
+        //    {
+        //        using (SqlConnection connection = new SqlConnection(databaseConnectionString))
+        //        {
+        //            SqlCommand command = new SqlCommand(query, connection);
+        //            connection.Open();
+
+        //            SqlDataReader reader = command.ExecuteReader();
+        //            while (reader.Read())
+        //            {
+        //                Activity activity;
+        //                if (reader["Discount"] == DBNull.Value)
+        //                {
+        //                    activity = new Activity((int)reader["Id"], (string)reader["Name"], (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"], (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"], (decimal)reader["PriceChild"], 0, (string)reader["Location"]);
+
+        //                }
+        //                else
+        //                {
+        //                    activity = new Activity((int)reader["Id"], (string)reader["Name"], (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"], (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"], (decimal)reader["PriceChild"], (decimal)reader["Discount"], (string)reader["Location"]);
+        //                }
+
+        //                activities.Add(activity);
+        //            }
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //    return activities;
+        //}
         public List<Activity> GetActivities(string filter)
         {
-            List<Activity> activities = new List<Activity>();
-
-            string query = "SELECT * FROM Activity";
             try
             {
-                using (SqlConnection connection = new SqlConnection(databaseConnectionString))
+                List<Activity> activities = new List<Activity>();
+                string sql = "SELECT a.Id, a.Name, a.Description, a.Date, a.Duration, a.AvailablePlaces, " +
+                             "a.PriceAdult, a.PriceChild, ISNULL(a.Discount, 0) AS Discount, a.Location " +
+                             "FROM Activity a " +
+                             "WHERE 1 = 1";
+
+                // Add the filter conditions
+                if (!string.IsNullOrWhiteSpace(filter))
                 {
-                    SqlCommand command = new SqlCommand(query, connection);
-                    connection.Open();
+                    sql += " AND (a.Name LIKE @filter OR a.Description LIKE @filter OR a.Location LIKE @filter)";
+                }
 
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                using (SqlConnection conn = new SqlConnection(databaseConnectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+
+                    // Add parameter for the filter condition
+                    if (!string.IsNullOrWhiteSpace(filter))
                     {
-                        Activity activity;
-                        if (reader["Discount"] == DBNull.Value)
-                        {
-                            activity = new Activity((int)reader["Id"], (string)reader["Name"], (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"], (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"], (decimal)reader["PriceChild"], 0, (string)reader["Location"]);
+                        cmd.Parameters.AddWithValue("@filter", $"%{filter}%");
+                    }
 
-                        }
-                        else
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
                         {
-                            activity = new Activity((int)reader["Id"], (string)reader["Name"], (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"], (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"], (decimal)reader["PriceChild"], (decimal)reader["Discount"], (string)reader["Location"]);
-                        }
+                            Activity activity = new Activity(
+                                id: Convert.ToInt32(reader["Id"]),
+                                name: reader["Name"].ToString(),
+                                description: reader["Description"].ToString(),
+                                date: Convert.ToDateTime(reader["Date"]),
+                                duration: Convert.ToInt32(reader["Duration"]),
+                                availablePlaces: Convert.ToInt32(reader["AvailablePlaces"]),
+                                priceAdult: Convert.ToDecimal(reader["PriceAdult"]),
+                                priceChild: Convert.ToDecimal(reader["PriceChild"]),
+                                discount: Convert.ToDecimal(reader["Discount"]),
+                                location: reader["Location"].ToString()
+                            );
 
-                        activities.Add(activity);
+                            activities.Add(activity);
+                        }
                     }
                 }
-            }
-            catch (SqlException ex)
-            {
-                throw ex;
-            }
 
-            return activities;
+                return activities;
+            }
+            catch (Exception ex)
+            {
+                throw new ActivityRepositoryException("getactivities", ex);
+            }
         }
+
 
         public Activity GetActivityByActivityId(int activityId)
         {

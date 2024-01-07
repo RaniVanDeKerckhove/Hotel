@@ -1,27 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Hotel.Presentation.Customer.Model;
 
 namespace Hotel.Presentation.Customer
 {
-    /// <summary>
-    /// Interaction logic for MemberWindow.xaml
-    /// </summary>
     public partial class MemberWindow : Window
     {
+        public MemberUI NewMember { get; private set; }
+
         public MemberWindow()
         {
             InitializeComponent();
+        }
+
+        private void AddMemberButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Check if all fields are filled
+                if (string.IsNullOrWhiteSpace(NameTextBox.Text) || DatePicker.SelectedDate == null)
+                {
+                    MessageBox.Show("Please fill all fields!");
+                    return;
+                }
+
+                // Get values from the input fields
+                string name = NameTextBox.Text;
+                DateOnly birthDay = new DateOnly(DatePicker.SelectedDate.Value.Year, DatePicker.SelectedDate.Value.Month, DatePicker.SelectedDate.Value.Day);
+
+                // Create the new MemberUI object
+                MemberUI newMember = new MemberUI(name, birthDay);
+
+                // Set the NewMember property to pass the result back to the calling code
+                NewMember = newMember;
+
+                MessageBox.Show("Member added successfully!");
+
+                // Close the window after adding the member
+                DialogResult = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
         }
     }
 }

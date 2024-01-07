@@ -4,6 +4,11 @@ namespace Hotel.Domain.Model
 {
     public class Member
     {
+        public Member()
+        {
+            // Parameterless constructor
+        }
+
         public Member(int id, int customerId, string name, DateOnly birthday)
         {
             Id = id;
@@ -18,6 +23,13 @@ namespace Hotel.Domain.Model
             Name = name;
             Birthday = birthday;
         }
+
+        public Member(string name, DateOnly birthday)
+        {
+            Name = name;
+            Birthday = birthday;
+        }
+
         public int Id { get; set; }
 
         private int _customerId;
@@ -51,19 +63,17 @@ namespace Hotel.Domain.Model
             }
             set
             {
-                if (DateOnly.FromDateTime(DateTime.Now) <= value) throw new CustomerException("Birthdate is not correct");
+                if (value >= DateOnly.FromDateTime(DateTime.Now)) throw new CustomerException("Birthdate should be later than today");
                 _birthday = value;
             }
         }
 
-    
         public override bool Equals(object? obj)
         {
             return obj is Member member &&
                    _customerId == member._customerId &&
                    string.Equals(_name, member._name, StringComparison.OrdinalIgnoreCase) &&
                    _birthday.Equals(member._birthday);
-
         }
 
         public override int GetHashCode()

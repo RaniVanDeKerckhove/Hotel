@@ -97,6 +97,20 @@ namespace Hotel.Domain.Managers
                 throw new CustomerManagerException("Error in GetCustomerById method of CustomerManager", ex);
             }
         }
+        public void AddMemberToCustomer(int customerId, Member member)
+        {
+            try
+            {
+
+                // Call the repository method to add a member to a customer
+                _customerRepository.AddMemberToCustomer(customerId, member);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception appropriately
+                throw new CustomerManagerException("Error in AddMemberToCustomer method of CustomerManager", ex);
+            }
+        }
 
     }
 }

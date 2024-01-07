@@ -64,6 +64,7 @@ namespace Hotel.Presentation.Organizer
 
                 MessageBox.Show("Activity added successfully!");
 
+
                 // Optionally close the window after adding the activity
                 Close();
             }

@@ -17,6 +17,8 @@ namespace Hotel.Domain.Interfaces
         void RemoveCustomerById(int customerId);
         public void UpdateCustomer(Customer customer);
         public List<Customer> GetAllCustomers();
+        void AddMemberToCustomer(int customerId, Member member);
+
 
 
 

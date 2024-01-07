@@ -14,6 +14,8 @@ namespace Hotel.Domain.Model
         public string Email { get; set; }
         public bool Status { get; set; } // Added Status property
 
+        public int NrOfMembers { get; private set; }
+
         public List<Member> _members = new List<Member>();
 
         public Customer()
@@ -28,14 +30,14 @@ namespace Hotel.Domain.Model
             PhoneNumber = phoneNumber;
             Email = email;
         }
-        public Customer(int id, string name, Address address, string phoneNumber, string email, bool status)
+        public Customer(int id, string name, Address address, string phoneNumber, string email, int nrOfMembers)
         {
             Id = id;
             Name = name;
             Address = address;
             PhoneNumber = phoneNumber;
             Email = email;
-            Status = status;
+            NrOfMembers = nrOfMembers;
         }
 
         public Customer(string name, string phoneNumber, string email, Address address)

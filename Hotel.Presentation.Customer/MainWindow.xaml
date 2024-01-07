@@ -14,8 +14,10 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBox Grid.Row="0" Grid.Column="0" Name="SearchTextBox" Margin="5"/>
-        <Button Grid.Row="0" Grid.Column="1" Name="SearchButton" Margin="5" Content="Search"  Background="#4CAF50" Foreground="White" FontSize="12" Click="SearchButton_Click"/>
+        <TextBox Grid.Row="0" Grid.Column="0" Name="SearchTextBox" Margin="5,5,41,5"/>
+        <Button Grid.Row="0" Name="SearchButton" Margin="513,5,185,5" Content="Search"  Background="#4CAF50" Foreground="White" FontSize="12" Click="SearchButton_Click" Grid.ColumnSpan="2"/>
+
+        <Button Grid.Row="0" Grid.Column="1" Name="AddMemberButton" Margin="106,5,52,5" Content="Add Member" Background="#2196F3" Foreground="White" FontSize="12" Click="AddMemberButton_Click"/>
 
         <DataGrid Name="CustomerDataGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10,5,42" IsReadOnly="True">
             <DataGrid.ContextMenu>
@@ -26,5 +28,7 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
+
     </Grid>
+
 </Window>

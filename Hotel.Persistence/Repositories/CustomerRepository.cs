@@ -22,10 +22,15 @@ namespace Hotel.Persistence.Repositories
             try
             {
                 List<Customer> customers = new List<Customer>();
-                string sql = "SELECT Id, Name AS customername, Email, PhoneNumber, " +
-                             "Address_City, Address_PostalCode, Address_Street, Address_HouseNumber " +
-                             "FROM Customer " +
-                             "WHERE Id IS NOT NULL AND Status = 1";
+                string sql = "SELECT c.Id, c.Name AS customername, c.Email, c.PhoneNumber, " +
+                             "c.Address_City, c.Address_PostalCode, c.Address_Street, c.Address_HouseNumber, " +
+                             "COUNT(m.Id) AS nrOfMembers " +
+                             "FROM Customer c " +
+                             "LEFT JOIN Member m ON c.Id = m.CustomerId " +
+                             "WHERE c.Id IS NOT NULL AND c.Status = 1 " +
+                             "GROUP BY c.Id, c.Name, c.Email, c.PhoneNumber, " +
+                             "c.Address_City, c.Address_PostalCode, c.Address_Street, c.Address_HouseNumber";
+
 
                 if (!string.IsNullOrWhiteSpace(filter))
                 {
@@ -47,7 +52,6 @@ namespace Hotel.Persistence.Repositories
                     {
                         while (reader.Read())
                         {
-                            // Update this part
                             Customer customer = new Customer(
                                 id: Convert.ToInt32(reader["Id"]),
                                 name: reader["customername"].ToString(),
@@ -58,11 +62,13 @@ namespace Hotel.Persistence.Repositories
                                     houseNumber: reader["Address_HouseNumber"].ToString()
                                 ),
                                 phoneNumber: reader["PhoneNumber"].ToString(),
-                                email: reader["Email"].ToString()
+                                email: reader["Email"].ToString(),
+                                nrOfMembers: Convert.ToInt32(reader["nrOfMembers"])
                             );
 
                             customers.Add(customer);
                         }
+
                     }
                 }
 
@@ -213,7 +219,7 @@ namespace Hotel.Persistence.Repositories
             try
             {
                 List<Customer> customers = new List<Customer>();
-                string sql = "SELECT [Id], [Name], [PhoneNumber], [Email], [Address_City], [Address_PostalCode], [Address_Street], [Address_HouseNumber], [Status], [nrOfMembers] FROM [HotelDB].[dbo].[Customer]";
+                string sql = "SELECT [Id], [Name], [PhoneNumber], [Email], [Address_City], [Address_PostalCode], [Address_Street], [Address_HouseNumber], [Status] FROM [HotelDB].[dbo].[Customer]";
 
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -252,5 +258,40 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("getallcustomers", ex);
             }
         }
+        public void AddMemberToCustomer(int customerId, Member member)
+        {
+            try
+            {
+                // Ensure that the member's birthdate is in the past
+                if (member.Birthday >= DateOnly.FromDateTime(DateTime.Now))
+                {
+                    throw new CustomerRepositoryException("Member's birthdate should be in the past");
+                }
+
+                // Implement the logic to add a member to a customer
+                string sql = "INSERT INTO Member (CustomerId, Name, Birthday) " +
+                             "VALUES (@CustomerId, @Name, @Birthday)";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+
+                    // Add parameters
+                    cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                    cmd.Parameters.AddWithValue("@Name", member.Name);
+                    cmd.Parameters.AddWithValue("@Birthday", member.Birthday.ToString("yyyy-MM-dd"));
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new CustomerRepositoryException("addmembertocustomer", ex);
+            }
+        }
+
     }
 }
+
