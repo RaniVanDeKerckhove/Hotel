@@ -27,6 +27,19 @@ namespace Hotel.Domain.Managers
             }
         }
 
+        public List<Customer> GetAllCustomers()
+        {
+            try
+            {
+                return _customerRepository.GetAllCustomers();
+            }
+            catch (Exception ex)
+            {
+                // Throw the custom exception without logging
+                throw new CustomerManagerException("Error in GetAllCustomers method of CustomerManager", ex);
+            }
+        }
+
         public void AddCustomer(Customer customer)
         {
             try

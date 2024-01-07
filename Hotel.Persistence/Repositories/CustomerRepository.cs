@@ -155,6 +155,62 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("getcustomerbyid", ex);
             }
         }
+        // get all customers
+        public List<Customer> GetAllCustomers()
+        {
+            try
+            {
+                List<Customer> customers = new List<Customer>();
+                string sql = "SELECT  " +
+                             "[Id], " +
+                             "[Name], " +
+                             "[PhoneNumber], " +
+                             "[Email], " +
+                             "[Status], " +
+                             "[Address_City], " +
+                             "[Address_Street], " +
+                             "[Address_PostalCode], " +
+                             "[Address_HouseNumber] " +
+                             "FROM [HotelDB].[dbo].[Customer];"; ;
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Update this part
+                            Customer customer = new Customer(
+                                id: Convert.ToInt32(reader["Id"]),
+                                name: reader["Name"].ToString(),
+                                address: new Address(
+                                    city: reader["Address_City"].ToString(),
+                                    postalCode: reader["Address_PostalCode"].ToString(),
+                                    street: reader["Address_Street"].ToString(),
+                                    houseNumber: reader["Address_HouseNumber"].ToString()
+                                ),
+                                phoneNumber: reader["PhoneNumber"].ToString(),
+                                email: reader["Email"].ToString()
+                            );
+
+                            customers.Add(customer);
+                        }
+                    }
+                }
+
+                return customers;  // Add this line to return the list of customers
+            }
+            catch (Exception ex)
+            {
+                throw new CustomerRepositoryException("getallcustomers", ex);
+            }
+        }
+
+
 
         public void RemoveCustomerById(int customerId)
         {

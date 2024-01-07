@@ -7,7 +7,8 @@ namespace Hotel.Domain.Repositories
     public interface IMemberRepository
     {
         void AddMember(Member member);
-        Member GetMemberByCustomerId(int CustomerId);
+        public List<Member> GetMembersByCustomerId(int customerId);
+
         List<Member> GetAllMembers();
         void RemoveMemberById(int Id);
     }

@@ -76,40 +76,42 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        public Member GetMemberByCustomerId(int CustomerId)
+        public List<Member> GetMembersByCustomerId(int customerId)
         {
             try
             {
-                Member member = null;
-                string sql = "SELECT CustomerId, Name, Birthday FROM Member WHERE Name = @memberName";
+                List<Member> members = new List<Member>();
+                string sql = "SELECT CustomerId, Name, Birthday FROM Member WHERE CustomerId = @customerId";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
+                    cmd.Parameters.AddWithValue("@customerId", customerId);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        if (reader.Read())
+                        while (reader.Read())
                         {
-                            int customerId = Convert.ToInt32(reader["CustomerId"]);
+                            int memberId = Convert.ToInt32(reader["CustomerId"]); // Assuming CustomerId is the member's ID
                             string name = (string)reader["Name"];
                             DateOnly birthday = DateOnly.FromDateTime((DateTime)reader["Birthday"]);
 
-                            member = new Member(customerId, name, birthday); // Replace with the actual constructor parameters from your Member class
+                            Member member = new Member(memberId, name, birthday);
+                            members.Add(member);
                         }
                     }
                 }
 
-                return member;
+                return members;
             }
             catch (Exception ex)
             {
-                throw new MemberRepositoryException("getmemberbyname", ex);
+                throw new MemberRepositoryException("getmembersbycustomerid", ex);
             }
         }
+
 
         public void RemoveMemberById(int Id)
         {

@@ -1,69 +1,61 @@
 ﻿<Window x:Class="Hotel.UI.Register.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Register" Height="900" Width="600">
-    <StackPanel Margin="10">
-        <!-- Select Customer -->
-        <TextBlock Text="Select Customer:" FontWeight="Bold" Margin="0,0,0,5"/>
-        <ComboBox Name="CustomerComboBox" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,10"/>
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="RegisterActivitiesWindow" Height="550" Width="1164">
+    <Grid>
+        <StackPanel Margin="10">
+            <!-- Search Panel -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Search:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox x:Name="SearchTextBox" Width="200" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Button Content="Search" Width="80" VerticalAlignment="Center"  Background="#4CAF50" Foreground="White" FontSize="12" Click="SearchButton_Click"/>
+                <Button Content="Show All" Width="80" VerticalAlignment="Center"  Background="#4CAF50" Foreground="White" FontSize="12" Click="ShowAllButton_Click" Margin="10,0,0,0"/>
+            </StackPanel>
+            <!-- Add this XAML code within the StackPanel, below the Search Panel -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Customer:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox x:Name="CustomerComboBox" Width="200" VerticalAlignment="Center" Margin="0,0,10,0" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="CustomerComboBox_SelectionChanged"/>
+               
+            </StackPanel>
 
-        <!-- Date of Activity -->
-        <TextBlock Text="Date of Activity:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBox Name="DateTextBox" Margin="5,0" Text="{Binding Path=Date, StringFormat={}{0:MM/dd/yyyy}, Mode=OneWay}" IsReadOnly="True"/>
-        </Border>
-
-        <!-- Select Activities -->
-        <TextBlock Text="Select Activities:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <ComboBox Name="ActivitiesComboBox" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,10"/>
-
-        <!-- Select Members -->
-        <TextBlock Text="Select Members:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <ListBox Name="MembersListBox" DisplayMemberPath="Name" SelectionMode="Multiple" Margin="0,0,0,10" Height="100" SelectionChanged="MembersListBox_SelectionChanged"/>
-
-        <!-- Where -->
-        <TextBlock Text="Where:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBox Name="LocationTextBox" Margin="5,0" Text="{Binding Path=Location}" IsReadOnly="True"/>
-        </Border>
-
-        <!-- Available Seats -->
-        <TextBlock Text="Available Seats:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBox Name="AvailableSeatsTextBox" Margin="5,0" Text="{Binding Path=AvailablePlaces}" IsReadOnly="True"/>
-        </Border>
-
-        <!-- Price for Adults -->
-        <TextBlock Text="Price for Adults:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBox Name="SubtotalAdultsTextBlock" Margin="5,0" IsReadOnly="True"/>
-        </Border>
-
-        <!-- Price for Children -->
-        <TextBlock Text="Price for Children:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBox Name="SubtotalChildrenTextBlock" Margin="5,0" IsReadOnly="True"/>
-        </Border>
+            <!-- Add this XAML code within the StackPanel, below the Customer ComboBox -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Select Member:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox x:Name="MemberComboBox" Width="200" VerticalAlignment="Center" DisplayMemberPath="Name"/>
+            </StackPanel>
 
 
-        <!-- Discount -->
-        <TextBlock Text="Discount:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBlock Name="DiscountTextBlock" Margin="0,0,0,10"/>
-        </Border>
+            <!-- ListBox to display selected members -->
+            <ListBox x:Name="MembersListBox" ItemsSource="{Binding SelectedCustomer.Members}" BorderBrush="#FFABABAB" BorderThickness="1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
-       
 
-        <!-- Total Cost -->
-        <TextBlock Text="Total Cost:" FontWeight="Bold" Margin="0,10,0,5"/>
-        <Border Margin="0,0,0,10" BorderBrush="Black" BorderThickness="1">
-            <TextBlock Name="TotalCostTextBlock" Margin="0,0,0,10"/>
-        </Border>
+            <!-- Activities DataGrid -->
+            <ListView x:Name="ActivitiesDataGrid" ItemsSource="{Binding FilteredActivities}" BorderBrush="#FFABABAB" BorderThickness="1">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                        <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="250"/>
+                        <GridViewColumn Header="Location" DisplayMemberBinding="{Binding Location}" Width="150"/>
+                        <GridViewColumn Header="Start Date" DisplayMemberBinding="{Binding Date}" Width="155"/>
+                        <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Duration}" Width="80"/>
+                        <GridViewColumn Header="Available Places" DisplayMemberBinding="{Binding AvailablePlaces}" Width="120"/>
+                        <GridViewColumn Header="Cost for Adults" DisplayMemberBinding="{Binding PriceAdult}" Width="110"/>
+                        <GridViewColumn Header="Cost for Children" DisplayMemberBinding="{Binding PriceChild}" Width="110"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
-        <!-- Spacer -->
-        <TextBlock/>
+        </StackPanel>
+        <Button Content="Register" Width="80" VerticalAlignment="Center" Background="#4CAF50" Foreground="White" FontSize="12" Click="RegisterButton_Click"/>
 
-        <!-- Sign Up button -->
-        <Button Content="Sign Up" Background="#4CAF50" Foreground="White" FontSize="16" Click="SignUpButton_Click" Margin="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
-    </StackPanel>
+    </Grid>
 </Window>
