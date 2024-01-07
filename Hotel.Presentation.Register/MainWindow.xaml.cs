@@ -1,137 +1,161 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
 using Hotel.Domain.Managers;
 using Hotel.Domain.Model;
-using Hotel.Persistence.Repositories;
-using Hotel.Presentation.Register;
 using Hotel.Util;
 
-namespace Hotel.UI.Register
+
+namespace Hotel.Presentation.Register
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow : Window
     {
+        private RegistrationManager registrationManager;
+        private CustomerManager customerManager;
         private ActivityManager activityManager;
-        private MemberRepository memberRepository; // Add this line
-        private ObservableCollection<Member> selectedMembers;
-        private CustomerManager customerManager;  // Add this line
-
-
+        private MemberManager memberManager;
+        private Registration registration;
+        private Customer customer;
+        private Activity activity;
+        private List<Member> members;
 
         public MainWindow()
         {
             InitializeComponent();
-            activityManager = new ActivityManager(RepositoryFactory.ActivityRepository);
-            memberRepository = (MemberRepository)RepositoryFactory.MemberRepository;
-            customerManager = new CustomerManager(RepositoryFactory.CustomerRepository);  // Add this line
-
-
-            RefreshActivities();
+            InitializeManagers();
+            PopulateComboBoxes();
         }
 
+        private void InitializeManagers()
+        {
+            registrationManager = new RegistrationManager(RepositoryFactory.RegistrationRepository);
+            customerManager = new CustomerManager(RepositoryFactory.CustomerRepository);
+            activityManager = new ActivityManager(RepositoryFactory.ActivityRepository);
+            memberManager = new MemberManager(RepositoryFactory.MemberRepository);
+        }
+
+        private void PopulateComboBoxes()
+        {
+            CustomerComboBox.ItemsSource = customerManager.GetCustomers(null);
+            ActivitiesComboBox.ItemsSource = activityManager.GetActivities(null);
+        }
+
+        private void SignUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CustomerComboBox.SelectedItem == null || ActivitiesComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill all fields");
+                return;
+            }
+
+            if (customer.Members.Count + 1 > activity.AvailablePlaces)
+            {
+                MessageBox.Show("Not enough capacity for this activity.");
+                return;
+
+            }
+
+            registrationManager.AddRegistration(registration);
+            MessageBox.Show("Registration completed successfully");
+            Close();
+        }
+
+        private void UpdateRegistrationDetails()
+        {
+            registration = new Registration(customer, activity);
+
+            var adultsInfo = $" {registration.NumberOfAdults} adult(s)";
+            var childrenInfo = $" {registration.NumberOfChildren} children";
+            SubtotalAdultsTextBlock.Text = registration.costAdult + adultsInfo;
+            SubtotalChildrenTextBlock.Text = registration.costChild + childrenInfo;
+
+            if (activity.Discount == null || activity.Discount == 0)
+            {
+                DiscountTextBlock.Text = " ";
+            }
+            else
+            {
+                DiscountTextBlock.Text = $"Discount: {activity.Discount}%";
+            }
+
+            TotalCostTextBlock.Text = registration.Price.ToString();
+        }
+
+        private void MemberCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            var member = checkBox.Tag as Member;
+            if (member != null)
+            {
+                customer.Members.Add(member);
+            }
+
+            UpdateRegistrationDetails();
+        }
+
+        private void MemberCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            var member = checkBox.Tag as Member;
+            if (member != null)
+            {
+                customer.Members.Remove(member);
+            }
+
+            UpdateRegistrationDetails();
+        }
 
         private void CustomerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // get all customers from the customerManager using GetAllCustomers
-            List<Customer> customers = customerManager.GetAllCustomers();
-            // set the combobox itemsource to the list of customers
-            CustomerComboBox.ItemsSource = customers;
-            // set the selected value to the first customer
-            CustomerComboBox.SelectedIndex = 0;
-        }
-        // show member by selected customer
-        private void ShowMembersButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
+            members = new List<Member>();
+            customer = CustomerComboBox.SelectedItem as Customer;
+            if (customer != null)
             {
-                // Fetch members for the selected customer using customerManager
-                int selectedCustomerId = (int)CustomerComboBox.SelectedValue;
-                Customer selectedCustomer = customerManager.GetCustomerById(selectedCustomerId);
-
-                if (selectedCustomer != null)
-                {
-                    // Update the selectedMembers collection
-                    selectedMembers.Clear();
-                    foreach (var member in selectedCustomer.Members)
-                    {
-                        selectedMembers.Add(member);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Error fetching customer information.");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}");
+                members = memberManager.GetMembersByCustomerId(customer.Id);
+                MembersCheckboxes.ItemsSource = members;
             }
         }
 
-
-
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Show activities that match the search
-            ActivitiesDataGrid.ItemsSource = activityManager.GetActivities(SearchTextBox.Text);
-        }
+            MembersCheckboxes.IsEnabled = true;
+            activity = ActivitiesComboBox.SelectedItem as Activity;
+            DateTextBlock.Text = activity.Date.ToString();
+            LocationTextBlock.Text = activity.Location;
+            AvailableSeatsTextBlock.Text = activity.AvailablePlaces.ToString();
+            customer.Members = new List<Member>();
+            registration = new Registration(customer, activity);
 
-        private void RefreshActivities()
-        {
-            // Show all activities
-            ActivitiesDataGrid.ItemsSource = activityManager.GetActivities(null);
-        }
-
-        private void ShowAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshActivities();
-        }
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
+            if (activity.Discount == null || activity.Discount == 0)
             {
-                // Fetch selected members and calculate total cost
-                List<Member> selectedMembersList = new List<Member>();
-                foreach (var item in MembersListBox.SelectedItems)
-                {
-                    if (item is Member selectedMember)
-                    {
-                        selectedMembersList.Add(selectedMember);
-                    }
-                }
-
-                // Fetch the selected activity
-                Activity selectedActivity = (Activity)ActivitiesDataGrid.SelectedItem;
-
-                if (selectedActivity != null)
-                {
-                    // Calculate the total cost
-                    decimal totalCost = selectedMembersList.Count * selectedActivity.PriceAdult;
-
-                    // Show the RegisterWindow with selected members and total cost
-                    RegisterWindow registerWindow = new RegisterWindow(selectedMembersList, totalCost);
-                    registerWindow.ShowDialog();
-                }
-                else
-                {
-                    MessageBox.Show("Please select an activity.");
-                }
+                SubtotalAdultsTextBlock.Text = registration.costAdult +
+                                               $"       {registration.NumberOfAdults} adult(s)";
+                SubtotalChildrenTextBlock.Text = registration.costChild +
+                                                 $"       {registration.NumberOfChildren} children";
+                DiscountTextBlock.Text = " ";
+                TotalCostTextBlock.Text = registration.Price.ToString();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"An error occurred: {ex.Message}");
+                SubtotalAdultsTextBlock.Text = registration.costAdult +
+                                               $" ({activity.PriceAdult * registration.NumberOfAdults})       {registration.NumberOfAdults} adult(s)";
+                SubtotalChildrenTextBlock.Text = registration.costChild +
+                                                 $" ({activity.PriceChild * registration.NumberOfChildren})      {registration.NumberOfChildren} children";
+                DiscountTextBlock.Text = $"Discount: {activity.Discount}%";
+                TotalCostTextBlock.Text = registration.Price.ToString();
             }
         }
-
-
-
-
-
-
-
-
     }
 }

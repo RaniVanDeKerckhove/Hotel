@@ -20,7 +20,7 @@ public class RegistrationRepository : IRegistrationRepository
         try
         {
             string sql =
-            "INSERT INTO Registration (CustomerId, ActivityId, TotalPrice, NumberOfAdults, NumberOfChildren) VALUES (@CustomerId, @ActivityId, @TotalPrice, @NumberOfAdults, @NumberOfChildren)";
+            "INSERT INTO Registration (CustomerId, ActivityId, TotalPrice, NumberOfAdults, NumberOfChildren) VALUES (@CustomerId, @ActivityId, @TotalCost, @NumberOfAdults, @NumberOfChildren)";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
