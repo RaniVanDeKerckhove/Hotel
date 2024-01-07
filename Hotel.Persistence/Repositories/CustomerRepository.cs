@@ -22,10 +22,7 @@ namespace Hotel.Persistence.Repositories
             try
             {
                 List<Customer> customers = new List<Customer>();
-                string sql = "SELECT Id, Name AS customername, Email, PhoneNumber, " +
-                             "Address_City, Address_PostalCode, Address_Street, Address_HouseNumber " +
-                             "FROM Customer " +
-                             "WHERE Id IS NOT NULL";
+                string sql = "SELECT Id, Name AS customername, Email, PhoneNumber, Address_City, Address_PostalCode, Address_Street, Address_HouseNumber FROM Customer WHERE Id IS NOT NULL";
 
                 if (!string.IsNullOrWhiteSpace(filter))
                 {
@@ -112,13 +109,7 @@ namespace Hotel.Persistence.Repositories
             try
             {
                 Customer customer = null;
-                string sql = "SELECT t1.Id, t1.Name AS customername, t1.ContactInfo_Email AS email, " +
-                             "t2.Email, t2.Phone, t3.City AS address_city, t3.PostalCode AS address_postalcode, " +
-                             "t3.Street AS address_street, t3.HouseNumber AS address_housenumber " +
-                             "FROM Customer t1 " +
-                             "LEFT JOIN ContactInfo t2 ON t1.ContactInfo_Email = t2.Email " +
-                             "LEFT JOIN Address t3 ON t2.Address_City = t3.City AND t2.Address_PostalCode = t3.PostalCode " +
-                             "WHERE t1.Id = @Id";
+                string sql = "SELECT t1.Id, t1.Name AS customername, t1.Email, t1.PhoneNumber AS phone, t1.Address_City AS address_city, t1.Address_PostalCode AS address_postalcode, t1.Address_Street AS address_street, t1.Address_HouseNumber AS address_housenumber FROM Customer t1 LEFT JOIN Address t3 ON t1.Address_City = t3.Ci\r\n";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = conn.CreateCommand())

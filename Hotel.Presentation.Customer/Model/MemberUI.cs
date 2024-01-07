@@ -15,5 +15,6 @@ namespace Hotel.Presentation.Customer.Model
 
         private DateOnly _birthDay;
         public DateOnly BirthDay { get { return _birthDay; } set { _birthDay = value; } }
+
     }
 }

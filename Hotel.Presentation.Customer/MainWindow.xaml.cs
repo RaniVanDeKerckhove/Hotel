@@ -38,8 +38,11 @@ namespace Hotel.Presentation.Customer
                     c.Id,
                     c.Name,
                     c.Email,
+                    c.Address.City,          // Update to use City property from Address
+                    c.Address.Street,        // Update to use Street property from Address
+                    c.Address.PostalCode,    // Update to use PostalCode property from Address
+                    c.Address.HouseNumber,   // Update to use HouseNumber property from Address
                     c.PhoneNumber,
-                    c.Address.ToString(),
                     c.Members.Count
                 ));
 
@@ -49,6 +52,7 @@ namespace Hotel.Presentation.Customer
                 customersUIs.Add(customerUI);
             }
         }
+
 
 
 
@@ -99,16 +103,46 @@ namespace Hotel.Presentation.Customer
 
         public void GetDatabaseInfo()
         {
-            foreach (Domain.Model.Customer c in customerManager.GetCustomers(null))
+            try
             {
-                List<MemberUI> membersUI = new List<MemberUI>();
-                foreach (Member m in c.GetMembers())
+                foreach (Domain.Model.Customer c in customerManager.GetCustomers(null))
                 {
-                    membersUI.Add(new MemberUI(m.Name, m.Birthday));
+                    List<MemberUI> membersUI = new List<MemberUI>();
+
+                    // Check if Members is not null before accessing its count
+                    if (c.Members != null)
+                    {
+                        foreach (Member m in c.Members)
+                        {
+                            membersUI.Add(new MemberUI(m.Name, m.Birthday));
+                        }
+                    }
+
+                    if (c.Address != null)
+                    {
+                        string city = c.Address.City ?? string.Empty;
+                        string street = c.Address.Street ?? string.Empty;
+                        string postalCode = c.Address.PostalCode ?? string.Empty;
+                        string houseNumber = c.Address.HouseNumber ?? string.Empty;
+
+                        // Use the count of membersUI instead of directly accessing c.Members.Count
+                        customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, city, street, postalCode, houseNumber, c.PhoneNumber, membersUI.Count));
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Address is null for customer with ID: {c.Id}");
+                        // If you want to skip customers with null address, you can continue to the next iteration
+                        continue;
+                    }
                 }
-                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, c.PhoneNumber, c.Address.ToString(), c.Members.Count));
+            }
+            catch (Exception ex)
+            {
+                // Log or display the exception details
+                Console.WriteLine($"Exception in GetDatabaseInfo: {ex.Message}");
             }
         }
+
 
         public void Refresh()
         {
