@@ -76,7 +76,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        public Member GetMemberByName(string memberName)
+        public Member GetMemberByCustomerId(int CustomerId)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace Hotel.Persistence.Repositories
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@memberName", memberName);
+                    cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -111,7 +111,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        public void RemoveMemberByName(string memberName)
+        public void RemoveMemberById(int Id)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Hotel.Persistence.Repositories
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@memberName", memberName);
+                    cmd.Parameters.AddWithValue("@Id", Id);
 
                     cmd.ExecuteNonQuery();
                 }

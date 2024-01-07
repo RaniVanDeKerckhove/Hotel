@@ -18,6 +18,11 @@ namespace Hotel.Domain.Model
             HouseNumber = houseNumber;
         }
 
+        public Address()
+        {
+
+        }
+
         public Address(string addressLine)
         {
             string[] parts = addressLine.Split(splitChar);

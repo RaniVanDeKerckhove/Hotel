@@ -8,7 +8,10 @@ namespace Hotel.Domain.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ContactInfo Contact { get; set; }
+        public Address Address { get; set; }  // Add this property
+
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
         public bool Status { get; set; } // Added Status property
 
         public List<Member> _members = new List<Member>();
@@ -17,20 +20,24 @@ namespace Hotel.Domain.Model
         {
         }
 
-        public Customer(int id, string name, ContactInfo contact)
+        public Customer(int id, string name, Address address, string phoneNumber, string email)
         {
             Id = id;
             Name = name;
-            Contact = contact;
+            Address = address;
+            PhoneNumber = phoneNumber;
+            Email = email;
         }
 
-        public Customer(string name, ContactInfo contact)
+        public Customer(string name, string phoneNumber, string email, Address address)
         {
             Name = name;
-            Contact = contact;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            Email = email;
         }
 
-        public IReadOnlyList<Member> Members => _members.AsReadOnly();
+        public List<Member> Members { get; set; } // Change IReadOnlyList<Member> to List<Member>
 
         public void AddMember(Member member)
         {

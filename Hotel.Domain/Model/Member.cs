@@ -4,12 +4,21 @@ namespace Hotel.Domain.Model
 {
     public class Member
     {
+        public Member(int id, int customerId, string name, DateOnly birthday)
+        {
+            Id = id;
+            CustomerId = customerId;
+            Name = name;
+            Birthday = birthday;
+        }
+
         public Member(int customerId, string name, DateOnly birthday)
         {
             CustomerId = customerId;
             Name = name;
             Birthday = birthday;
         }
+        public int Id { get; set; }
 
         private int _customerId;
         public int CustomerId
@@ -52,8 +61,9 @@ namespace Hotel.Domain.Model
         {
             return obj is Member member &&
                    _customerId == member._customerId &&
-                   _name == member._name &&
+                   string.Equals(_name, member._name, StringComparison.OrdinalIgnoreCase) &&
                    _birthday.Equals(member._birthday);
+
         }
 
         public override int GetHashCode()

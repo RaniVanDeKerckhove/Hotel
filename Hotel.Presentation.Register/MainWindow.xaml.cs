@@ -1,13 +1,13 @@
-﻿using Hotel.Domain.Managers;
-using Hotel.Domain.Model;
-using Hotel.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Hotel.Domain.Managers;
+using Hotel.Domain.Model;
+using Hotel.Util;
 
-namespace HotelProject.UI.Register
+namespace Hotel.UI.Register
 {
     public partial class MainWindow : Window
     {
@@ -35,7 +35,7 @@ namespace HotelProject.UI.Register
 
             // Initialize customer object
             customer = new Customer();
-            customer._members = new List<Member>();
+            customer.Members = new List<Member>();
         }
 
         private void SignUpButton_Click(object sender, RoutedEventArgs e)
@@ -62,66 +62,41 @@ namespace HotelProject.UI.Register
         private void CustomerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             customer = CustomerComboBox.SelectedItem as Customer;
-
             if (customer != null)
             {
-                // Update members based on selected customer
                 members = memberManager.GetMembersByCustomerId(customer.Id);
                 MembersListBox.ItemsSource = members;
+
+                // Update other UI elements related to customer data if needed
+                // For example, update TextBoxes, Labels, etc.
             }
-        }
-
-        private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Handle selection change in ActivitiesComboBox
-            MembersListBox.IsEnabled = true;
-            MembersListBox.SelectedItems.Clear();
-            activity = ActivitiesComboBox.SelectedItem as Activity;
-
-            // Update UI elements based on selected activity
-            DateTextBox.Text = activity.Date.ToString();
-            LocationTextBox.Text = activity.Location;
-            AvailableSeatsTextBox.Text = activity.AvailablePlaces.ToString();
-
-            // Initialize registration with customer and activity
-            customer._members = new List<Member>();
-            registration = new Registration(customer, activity);
-
-            // Update UI elements based on registration details
-            UpdateRegistrationUI();
         }
 
         private void MembersListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Handle selection change in MembersListBox
-            customer._members = new List<Member>();
+            customer.Members = MembersListBox.SelectedItems.Cast<Member>().ToList();
 
-            foreach (Member member in MembersListBox.SelectedItems)
-            {
-                customer._members.Add(member);
-            }
-
-            // Update UI elements based on registration details
-            UpdateRegistrationUI();
+            registration = new Registration(customer, activity);
+            // Update UI elements related to registration and member data
         }
 
-        private void UpdateRegistrationUI()
+        private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Update UI elements based on registration details
-            if (activity.Discount == null || activity.Discount == 0)
-            {
-                SubtotalAdultsTextBlock.Text = registration.AdultCost.ToString() + $"       {registration.NumberOfAdults} adults";
-                SubtotalChildrenTextBlock.Text = registration.ChildCost.ToString() + $"       {registration.NumberOfChildren} children";
-                DiscountTextBlock.Text = " ";
-                TotalCostTextBlock.Text = registration.TotalPrice.ToString();
-            }
-            else
-            {
-                SubtotalAdultsTextBlock.Text = $"{registration.AdultCost.ToString()} ({activity.PriceAdult * registration.NumberOfAdults} per adult)       {registration.NumberOfAdults} adults";
-                SubtotalChildrenTextBlock.Text = $"{registration.ChildCost.ToString()} ({activity.PriceChild * registration.NumberOfChildren})       {registration.NumberOfChildren} children";
-                DiscountTextBlock.Text = $"Discount: {activity.Discount}%";
-                TotalCostTextBlock.Text = registration.TotalPrice.ToString();
-            }
+            MembersListBox.IsEnabled = true;
+            MembersListBox.SelectedItems.Clear();
+            activity = ActivitiesComboBox.SelectedItem as Activity;
+            DateTextBox.Text = activity.Date.ToString();
+            LocationTextBox.Text = activity.Location;
+            AvailableSeatsTextBox.Text = activity.AvailablePlaces.ToString();
+            customer.Members = new List<Member>();
+            registration = new Registration(customer, activity);
+
+           
         }
+
+        
+
+
+
     }
 }

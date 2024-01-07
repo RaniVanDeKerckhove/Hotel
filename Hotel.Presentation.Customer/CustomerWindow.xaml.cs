@@ -35,16 +35,14 @@ namespace Hotel.Presentation.Customer
             InitializeComponent();
             customerManager = new CustomerManager(RepositoryFactory.CustomerRepository);
             memberManager = new MemberManager(RepositoryFactory.MemberRepository);
-            InitializeComponent();
             this.CustomerUI = customerUI;
             if (CustomerUI != null)
             {
-                IdTextBox.Text = CustomerUI.Id.HasValue ? CustomerUI.Id.ToString() : string.Empty;
+                IdTextBox.Text = CustomerUI.Id.ToString();
                 NameTextBox.Text = CustomerUI.Name;
                 EmailTextBox.Text = CustomerUI.Email;
                 PhoneTextBox.Text = CustomerUI.Phone;
             }
-
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -59,44 +57,54 @@ namespace Hotel.Presentation.Customer
                 if (CustomerUI == null)
                 {
                     // New customer
-                    Address address = new Address(CityTextBox.Text, StreetTextBox.Text, ZipTextBox.Text, HouseNumberTextBox.Text);
-                    ContactInfo contactInfo = new ContactInfo(EmailTextBox.Text, PhoneTextBox.Text, address);
-                    Hotel.Domain.Model.Customer customer = new Hotel.Domain.Model.Customer(NameTextBox.Text, contactInfo);
+                    Address address = new Address(CityTextBox.Text, StreetTextBox.Text, ZipTextBox.Text,
+                        HouseNumberTextBox.Text);
+                    CustomerUI = new CustomerUI(
+                        name: NameTextBox.Text,
+                        email: EmailTextBox.Text,
+                        address: $"{address.City}, {address.Street}, {address.PostalCode}, {address.HouseNumber}",
+                        phone: PhoneTextBox.Text,
+                        nrOfMembers: 0
+                    );
 
-                    // Pass an empty list as the last parameter for the constructor
-                    CustomerUI = new CustomerUI(NameTextBox.Text, EmailTextBox.Text, address.ToString(), PhoneTextBox.Text, 0);
+                    // Add the new customer to the database
+                    Domain.Model.Customer newCustomer = new Domain.Model.Customer
+                    {
+                        Name = CustomerUI.Name,
+                        Email = CustomerUI.Email,
+                        PhoneNumber = CustomerUI.Phone,
+                        Address = address
+                    };
 
-                    // Add to DB
-                    customerManager.AddCustomer(customer);
+                    customerManager.AddCustomer(newCustomer);
+
+                    // Retrieve the updated customer (including the generated ID)
+                    newCustomer = customerManager.GetCustomerById(newCustomer.Id);
+
+                    // Update the CustomerUI with the database information
+                    CustomerUI = new CustomerUI(
+                        newCustomer.Id,
+                        newCustomer.Name,
+                        newCustomer.Email,
+                        $"{newCustomer.Address.City}, {newCustomer.Address.Street}, {newCustomer.Address.PostalCode}, {newCustomer.Address.HouseNumber}",
+                        newCustomer.PhoneNumber,
+                        0
+                    );
                 }
                 else
                 {
                     // Update existing customer
-                    // Update DB
                     CustomerUI.Email = EmailTextBox.Text;
-                    CustomerUI.Phone = PhoneTextBox.Text;
+                    CustomerUI.Phone = PhoneTextBox.Text; // Update with the correct phone number
                     CustomerUI.Name = NameTextBox.Text;
-                    // Update additional properties from CustomerUI if any
 
-                    // Get the customer from the database using its ID
-                    Hotel.Domain.Model.Customer existingCustomer = customerManager.GetCustomerById(CustomerUI.Id.Value);
+                    // Update the customer in the database
+                    Domain.Model.Customer existingCustomer = customerManager.GetCustomerById(CustomerUI.Id ?? 0);
+                    existingCustomer.Email = CustomerUI.Email;
+                    existingCustomer.PhoneNumber = CustomerUI.Phone;
+                    existingCustomer.Name = CustomerUI.Name;
 
-                    if (existingCustomer != null)
-                    {
-                        // Update the existing customer's properties
-                        existingCustomer.Name = NameTextBox.Text;
-                        existingCustomer.Contact.Email = EmailTextBox.Text;
-                        existingCustomer.Contact.Phone = PhoneTextBox.Text;
-                        // Update additional properties from CustomerUI if any
-
-                        // Save the changes to the database
-                        customerManager.UpdateCustomer(existingCustomer);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Customer not found in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
+                    customerManager.UpdateCustomer(existingCustomer);
                 }
 
                 DialogResult = true;
@@ -104,11 +112,10 @@ namespace Hotel.Presentation.Customer
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately (log, show an error message, etc.)
-                MessageBox.Show($"Error adding/updating customer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
-
 
     }
 

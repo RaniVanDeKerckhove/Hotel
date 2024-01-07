@@ -37,9 +37,9 @@ namespace Hotel.Presentation.Customer
                 .Select(c => new CustomerUI(
                     c.Id,
                     c.Name,
-                    c.Contact.Email,
-                    c.Contact.Phone,
-                    c.Contact.Address.ToString(),
+                    c.Email,
+                    c.PhoneNumber,
+                    c.Address.ToString(),
                     c.Members.Count
                 ));
 
@@ -106,7 +106,7 @@ namespace Hotel.Presentation.Customer
                 {
                     membersUI.Add(new MemberUI(m.Name, m.Birthday));
                 }
-                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Contact.Email, c.Contact.Phone, c.Contact.Address.ToString(), c.Members.Count));
+                customersUIs.Add(new CustomerUI(c.Id, c.Name, c.Email, c.PhoneNumber, c.Address.ToString(), c.Members.Count));
             }
         }
 

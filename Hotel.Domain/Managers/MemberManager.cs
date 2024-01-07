@@ -30,11 +30,12 @@ namespace Hotel.Domain.Model
             _members.Add(member);
         }
 
-        // Retrieve a member by name
-        public Member GetMemberByName(string memberName)
+        // Retrieve a member by customerid 
+        public Member GetMembers(int CustomerId)
         {
-            return _members.Find(member => member.Name == memberName);
+            return _members.Find(member => member.CustomerId == CustomerId);
         }
+      
 
         // Retrieve all members
         public List<Member> GetAllMembers()
@@ -43,9 +44,9 @@ namespace Hotel.Domain.Model
         }
 
         // Remove a member by name
-        public void RemoveMemberByName(string memberName)
+        public void RemoveMemberById(int CustomerId)
         {
-            Member memberToRemove = GetMemberByName(memberName);
+            Member memberToRemove = GetMembers(CustomerId);
             if (memberToRemove != null)
             {
                 _members.Remove(memberToRemove);

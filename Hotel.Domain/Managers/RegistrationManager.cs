@@ -6,41 +6,19 @@ namespace Hotel.Domain.Model
 {
     public class RegistrationManager
     {
-        private List<Registration> _registrations = new List<Registration>();
-
-        // Constructor that takes a repository
+        private IRegistrationRepository registrationRepository;
         public RegistrationManager(IRegistrationRepository registrationRepository)
         {
-            _registrations = registrationRepository.GetAllRegistrations();
+            this.registrationRepository = registrationRepository;
         }
 
         // Add a new registration to the manager
         public void AddRegistration(Registration registration)
         {
-            _registrations.Add(registration);
+            registrationRepository.AddRegistration(registration);
         }
 
-        // Retrieve a registration by ID
-        public Registration GetRegistrationById(int registrationId)
-        {
-            return _registrations.Find(registration => registration.RegistrationId == registrationId);
-        }
 
-        // Retrieve all registrations
-        public List<Registration> GetAllRegistrations()
-        {
-            return _registrations;
-        }
-
-        // Remove a registration by ID
-        public void RemoveRegistrationById(int registrationId)
-        {
-            Registration registrationToRemove = GetRegistrationById(registrationId);
-            if (registrationToRemove != null)
-            {
-                _registrations.Remove(registrationToRemove);
-            }
-        }
 
     }
 }

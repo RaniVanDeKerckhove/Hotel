@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Hotel.Domain.Model;
 
 namespace Hotel.Presentation.Customer.Model
 {
@@ -16,42 +13,42 @@ namespace Hotel.Presentation.Customer.Model
             Address = address;
             Phone = phone;
             NrOfMembers = nrOfMembers;
+            _members = new List<MemberUI>();
         }
 
         public CustomerUI(int? id, string name, string email, string address, string phone, int nrOfMembers)
+            : this(name, email, address, phone, nrOfMembers)
         {
             Id = id;
-            Name = name;
-            Email = email;
-            Address = address;
-            Phone = phone;
-            NrOfMembers = nrOfMembers;
-
         }
+
         public List<MemberUI> _members { get; set; }
 
-
         public int? Id { get; set; }
+
         private string _name;
         public string Name { get { return _name; } set { _name = value; OnPropertyChanged(); } }
+
         private string _email;
         public string Email { get { return _email; } set { _email = value; OnPropertyChanged(); } }
-        public string Address { get; set; }
-        private string _phone;
-        public string Phone { get { return _phone; } set {_phone=value; OnPropertyChanged();} }
-        public int NrOfMembers { get; set; }
 
+        public string Address { get; set; }
+
+        private string _phone;
+        public string Phone { get { return _phone; } set { _phone = value; OnPropertyChanged(); } }
+
+        public int NrOfMembers { get; set; }
 
         public string Municipality { get; private set; }
         public string ZipCode { get; private set; }
         public string HouseNumber { get; private set; }
         public string Street { get; private set; }
+
         private void OnPropertyChanged(string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public event PropertyChangedEventHandler? PropertyChanged;
 
-        
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }
