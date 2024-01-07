@@ -42,12 +42,6 @@ namespace Hotel.Presentation.Customer
                 NameTextBox.Text = CustomerUI.Name;
                 EmailTextBox.Text = CustomerUI.Email;
                 PhoneTextBox.Text = CustomerUI.Phone;
-
-                // Extract address details and set in respective textboxes
-                CityTextBox.Text = CustomerUI.Municipality;
-                StreetTextBox.Text = CustomerUI.Street;
-                ZipTextBox.Text = CustomerUI.PostalCode;
-                HouseNumberTextBox.Text = CustomerUI.HouseNumber;
             }
         }
 
@@ -63,17 +57,14 @@ namespace Hotel.Presentation.Customer
                 if (CustomerUI == null)
                 {
                     // New customer
-                    Address address = new Address(CityTextBox.Text, StreetTextBox.Text, ZipTextBox.Text, HouseNumberTextBox.Text);
+                    Address address = new Address(CityTextBox.Text, StreetTextBox.Text, ZipTextBox.Text,
+                        HouseNumberTextBox.Text);
                     CustomerUI = new CustomerUI(
-                        null,
-                        NameTextBox.Text,
-                        EmailTextBox.Text,
-                        CityTextBox.Text,
-                        StreetTextBox.Text,
-                        ZipTextBox.Text,
-                        HouseNumberTextBox.Text,
-                        PhoneTextBox.Text,
-                        0
+                        name: NameTextBox.Text,
+                        email: EmailTextBox.Text,
+                        address: $"{address.City}, {address.Street}, {address.PostalCode}, {address.HouseNumber}",
+                        phone: PhoneTextBox.Text,
+                        nrOfMembers: 0
                     );
 
                     // Add the new customer to the database
@@ -95,10 +86,7 @@ namespace Hotel.Presentation.Customer
                         newCustomer.Id,
                         newCustomer.Name,
                         newCustomer.Email,
-                        newCustomer.Address.City,
-                        newCustomer.Address.Street,
-                        newCustomer.Address.PostalCode,
-                        newCustomer.Address.HouseNumber,
+                        $"{newCustomer.Address.City}, {newCustomer.Address.Street}, {newCustomer.Address.PostalCode}, {newCustomer.Address.HouseNumber}",
                         newCustomer.PhoneNumber,
                         0
                     );
@@ -107,7 +95,7 @@ namespace Hotel.Presentation.Customer
                 {
                     // Update existing customer
                     CustomerUI.Email = EmailTextBox.Text;
-                    CustomerUI.Phone = PhoneTextBox.Text;
+                    CustomerUI.Phone = PhoneTextBox.Text; // Update with the correct phone number
                     CustomerUI.Name = NameTextBox.Text;
 
                     // Update the customer in the database
@@ -128,5 +116,8 @@ namespace Hotel.Presentation.Customer
                     MessageBoxImage.Error);
             }
         }
+
     }
+
+
 }

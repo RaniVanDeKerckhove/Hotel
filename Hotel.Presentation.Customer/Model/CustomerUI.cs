@@ -1,25 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using Hotel.Domain.Model;
 
 namespace Hotel.Presentation.Customer.Model
 {
     public class CustomerUI : INotifyPropertyChanged
     {
-        public CustomerUI(string name, string email, string municipality, string street, string postalCode, string houseNumber, string phone, int nrOfMembers)
+        public CustomerUI(string name, string email, string address, string phone, int nrOfMembers)
         {
             Name = name;
             Email = email;
-            Municipality = municipality;
-            Street = street;
-            PostalCode = postalCode;
-            HouseNumber = houseNumber;
+            Address = address;
             Phone = phone;
             NrOfMembers = nrOfMembers;
             _members = new List<MemberUI>();
         }
 
-        public CustomerUI(int? id, string name, string email, string municipality, string street, string postalCode, string houseNumber, string phone, int nrOfMembers)
-            : this(name, email, municipality, street, postalCode, houseNumber, phone, nrOfMembers)
+        public CustomerUI(int? id, string name, string email, string address, string phone, int nrOfMembers)
+            : this(name, email, address, phone, nrOfMembers)
         {
             Id = id;
         }
@@ -34,15 +32,17 @@ namespace Hotel.Presentation.Customer.Model
         private string _email;
         public string Email { get { return _email; } set { _email = value; OnPropertyChanged(); } }
 
-        public string Municipality { get; set; }
-        public string Street { get; set; }
-        public string PostalCode { get; set; }
-        public string HouseNumber { get; set; }
+        public string Address { get; set; }
 
         private string _phone;
         public string Phone { get { return _phone; } set { _phone = value; OnPropertyChanged(); } }
 
         public int NrOfMembers { get; set; }
+
+        public string Municipality { get; private set; }
+        public string ZipCode { get; private set; }
+        public string HouseNumber { get; private set; }
+        public string Street { get; private set; }
 
         private void OnPropertyChanged(string name = null)
         {
