@@ -281,7 +281,7 @@ namespace Hotel.Persistence.Repositories
                     // Add parameters
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
                     cmd.Parameters.AddWithValue("@Name", member.Name);
-                    cmd.Parameters.AddWithValue("@Birthday", member.Birthday.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@Birthday", member.Birthday);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -291,6 +291,7 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("addmembertocustomer", ex);
             }
         }
+
 
     }
 }

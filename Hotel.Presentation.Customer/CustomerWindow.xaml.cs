@@ -22,7 +22,6 @@ namespace Hotel.Presentation.Customer
 {
     public partial class CustomerWindow : Window
     {
-        // Add this line at the beginning of your class
         public CustomerUI CustomerUI { get; set; }
 
         private CustomerManager customerManager;

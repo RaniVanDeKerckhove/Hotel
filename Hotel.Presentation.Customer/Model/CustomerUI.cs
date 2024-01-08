@@ -59,6 +59,7 @@ namespace Hotel.Presentation.Customer.Model
         public string HouseNumber { get; private set; }
         public string Street { get; private set; }
 
+        
         private void OnPropertyChanged(string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
