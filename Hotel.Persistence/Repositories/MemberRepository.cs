@@ -8,15 +8,18 @@ using Hotel.Persistence.Exceptions;
 
 namespace Hotel.Persistence.Repositories
 {
+    // Repository class for handling data operations related to members
     public class MemberRepository : IMemberRepository
     {
         private readonly string connectionString;
 
+        // Constructor to initialize the database connection string
         public MemberRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
+        // Method to add a new member to the database
         public void AddMember(Member member)
         {
             try
@@ -28,7 +31,7 @@ namespace Hotel.Persistence.Repositories
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@customerId", member.CustomerId); 
+                    cmd.Parameters.AddWithValue("@customerId", member.CustomerId);
                     cmd.Parameters.AddWithValue("@name", member.Name);
                     cmd.Parameters.AddWithValue("@birthday", member.Birthday.ToDateTime(TimeOnly.MinValue));
 
@@ -41,6 +44,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        // Method to retrieve all members from the database
         public List<Member> GetAllMembers()
         {
             try
@@ -76,6 +80,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        // Method to retrieve members by their associated customer ID from the database
         public List<Member> GetMembersByCustomerId(int customerId)
         {
             try
@@ -112,7 +117,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-
+        // Method to remove a member by their ID from the database
         public void RemoveMemberById(int Id)
         {
             try

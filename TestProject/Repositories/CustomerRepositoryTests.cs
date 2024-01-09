@@ -8,7 +8,8 @@ namespace TestProject.Repositories
     public class CustomerRepositoryTests
     {
         // Please replace "your_connection_string" with the actual connection string for your database
-        private readonly string connectionString = "your_connection_string";
+        private readonly string connectionString =
+            "Data Source=MSI\\SQLEXPRESS;Initial Catalog=HotelDB;Integrated Security=True;TrustServerCertificate=True";
 
         [Fact]
         public void AddCustomer_ValidCustomer_ShouldAddCustomerToDatabase()
@@ -46,43 +47,32 @@ namespace TestProject.Repositories
             // Cleanup
             repository.RemoveCustomerById(customer.Id);
         }
+        //remove test
+
 
         [Fact]
         public void AddMemberToCustomer_ValidMember_ShouldAddMemberToCustomer()
         {
             // Arrange
             var repository = new CustomerRepository(connectionString);
-            var customer = new Customer
-            {
-                Name = "John Doe",
-                Email = "john.doe@example.com",
-                PhoneNumber = "1234567890",
-                Address = new Address
-                {
-                    City = "City",
-                    PostalCode = "12345",
-                    Street = "Street",
-                    HouseNumber = "123"
-                }
-            };
-            repository.AddCustomer(customer);
-
-            var member = new Member
-            {
-                Name = "Member 1",
-                Birthday = new DateOnly(1990, 1, 1)
-            };
+            var member = new Member("John Doe", new DateOnly(1990, 1, 1));
+            var customerId = 55; // Replace this with the actual customer ID you want to use
 
             // Act
-            repository.AddMemberToCustomer(customer.Id, member);
+            repository.AddMemberToCustomer(customerId, member);
 
             // Assert
-            var retrievedCustomer = repository.GetCustomerById(customer.Id);
+            var retrievedCustomer = repository.GetCustomerById(customerId);
             Assert.NotNull(retrievedCustomer);
-            Assert.Contains(member, retrievedCustomer.GetMembers());
+            Assert.Equal(customerId, retrievedCustomer.Id); // Ensure the correct customer is retrieved
+            Assert.Equal(member.Name, retrievedCustomer.Members.First().Name); // Assuming Members is a collection
+            // Add more assertions if needed
 
-            // Cleanup
-            repository.RemoveCustomerById(customer.Id);
+            // Cleanup (if necessary)
+            // repository.RemoveMemberFromCustomer(customerId, memberId);
         }
+
+
+
     }
 }

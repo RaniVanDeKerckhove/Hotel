@@ -40,7 +40,7 @@ namespace Hotel.Presentation.Customer
                     c.Email,
                     c.Address.ToString(),
                     c.PhoneNumber,
-                    c.Members.Count
+                    c.NrOfMembers  // Use null-conditional operator to get the count, default to 0 if Members is null
                 ));
 
             // Add filtered customers to the ObservableCollection

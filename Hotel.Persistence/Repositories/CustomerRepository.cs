@@ -8,15 +8,18 @@ using System.Linq;
 
 namespace Hotel.Persistence.Repositories
 {
+    // Repository class for handling data operations related to customers
     public class CustomerRepository : ICustomerRepository
     {
         private readonly string connectionString;
 
+        // Constructor to initialize the database connection string
         public CustomerRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
+        // Method to retrieve customers from the database based on a filter
         public List<Customer> GetCustomers(string filter)
         {
             try
@@ -27,15 +30,15 @@ namespace Hotel.Persistence.Repositories
                              "COUNT(m.Id) AS nrOfMembers " +
                              "FROM Customer c " +
                              "LEFT JOIN Member m ON c.Id = m.CustomerId " +
-                             "WHERE c.Id IS NOT NULL AND c.Status = 1 " +
-                             "GROUP BY c.Id, c.Name, c.Email, c.PhoneNumber, " +
-                             "c.Address_City, c.Address_PostalCode, c.Address_Street, c.Address_HouseNumber";
-
+                             "WHERE c.Status = 1 ";
 
                 if (!string.IsNullOrWhiteSpace(filter))
                 {
-                    sql += " AND (Id LIKE @filter OR Name LIKE @filter OR Email LIKE @filter)";
+                    sql += "AND c.Id IN (SELECT Id FROM Customer WHERE Id LIKE @filter OR Name LIKE @filter OR Email LIKE @filter)";
                 }
+
+                sql += " GROUP BY c.Id, c.Name, c.Email, c.PhoneNumber, " +
+                       "c.Address_City, c.Address_PostalCode, c.Address_Street, c.Address_HouseNumber";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = conn.CreateCommand())
@@ -68,7 +71,6 @@ namespace Hotel.Persistence.Repositories
 
                             customers.Add(customer);
                         }
-
                     }
                 }
 
@@ -80,6 +82,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        // Method to add a new customer to the database
         public void AddCustomer(Customer customer)
         {
             try
@@ -113,6 +116,8 @@ namespace Hotel.Persistence.Repositories
                 throw new CustomerRepositoryException("addcustomer", ex);
             }
         }
+
+        // Method to retrieve a customer by their ID from the database
         public Customer GetCustomerById(int customerId)
         {
             try
@@ -158,6 +163,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        // Method to remove a customer by their ID from the database
         public void RemoveCustomerById(int customerId)
         {
             try
@@ -180,6 +186,7 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        // Method to update customer details in the database
         public void UpdateCustomer(Customer customer)
         {
             try
@@ -214,13 +221,13 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
+        // Method to retrieve all customers from the database
         public List<Customer> GetAllCustomers()
         {
             try
             {
                 List<Customer> customers = new List<Customer>();
                 string sql = "SELECT [Id], [Name], [PhoneNumber], [Email], [Address_City], [Address_PostalCode], [Address_Street], [Address_HouseNumber], [Status] FROM [HotelDB].[dbo].[Customer]";
-
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = conn.CreateCommand())
@@ -232,7 +239,7 @@ namespace Hotel.Persistence.Repositories
                     {
                         while (reader.Read())
                         {
-                            // Update this part
+                            // Create a customer object and add it to the list
                             Customer customer = new Customer(
                                 id: Convert.ToInt32(reader["Id"]),
                                 name: reader["Name"].ToString(),
@@ -251,13 +258,15 @@ namespace Hotel.Persistence.Repositories
                     }
                 }
 
-                return customers;  // Add this line to return the list of customers
+                return customers;  // Return the list of customers
             }
             catch (Exception ex)
             {
                 throw new CustomerRepositoryException("getallcustomers", ex);
             }
         }
+
+        // Method to add a member to a customer in the database
         public void AddMemberToCustomer(int customerId, Member member)
         {
             try
@@ -281,7 +290,7 @@ namespace Hotel.Persistence.Repositories
                     // Add parameters
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
                     cmd.Parameters.AddWithValue("@Name", member.Name);
-                    cmd.Parameters.AddWithValue("@Birthday", member.Birthday);
+                    cmd.Parameters.AddWithValue("@Birthday", member.Birthday.ToString("yyyy-MM-dd"));
 
                     cmd.ExecuteNonQuery();
                 }
@@ -295,4 +304,3 @@ namespace Hotel.Persistence.Repositories
 
     }
 }
-

@@ -18,6 +18,8 @@ namespace Hotel.Domain.Model
 
         public List<Member> _members = new List<Member>();
 
+
+
         public Customer()
         {
         }

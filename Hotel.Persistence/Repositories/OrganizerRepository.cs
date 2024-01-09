@@ -7,20 +7,24 @@ using Hotel.Persistence.Exceptions;
 
 namespace Hotel.Persistence.Repositories
 {
+    // Repository class for handling data operations related to organizers
     public class OrganizerRepository : IOrganizerRepository
     {
         private readonly string connectionString;
 
+        // Constructor to initialize the database connection string
         public OrganizerRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
+        // Method to add a new organizer to the database
         public void AddOrganizer(Organizer organizer)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // Actual implementation is not provided in the code
         }
 
+        // Method to retrieve all organizers from the database with contact info and address
         public List<Organizer> GetAllOrganizers()
         {
             List<Organizer> organizers = new List<Organizer>();
@@ -70,6 +74,7 @@ namespace Hotel.Persistence.Repositories
             return organizers;
         }
 
+        // Method to retrieve an organizer by their ID from the database
         public Organizer GetOrganizerById(int organizerId)
         {
             try
@@ -116,9 +121,10 @@ namespace Hotel.Persistence.Repositories
             catch (Exception ex)
             {
                 throw new OrganizerRepositoryException("getorganizer", ex);
-            }   
+            }
         }
 
+        // Method to remove an organizer by their ID from the database
         public void RemoveOrganizerById(int organizerId)
         {
             try
@@ -137,8 +143,8 @@ namespace Hotel.Persistence.Repositories
             }
             catch (Exception ex)
             {
-               throw new OrganizerRepositoryException("removeorganizer", ex);
-           }
+                throw new OrganizerRepositoryException("removeorganizer", ex);
+            }
         }
     }
 }

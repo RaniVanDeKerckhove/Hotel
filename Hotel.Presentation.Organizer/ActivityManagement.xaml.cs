@@ -7,9 +7,7 @@ using Hotel.Domain.Model;
 
 namespace Hotel.Presentation.Organizer
 {
-    /// <summary>
-    /// Interaction logic for ActivityManagement.xaml
-    /// </summary>
+ 
     public partial class ActivityManagement : Window
     {
         private ActivityManager activityManager;

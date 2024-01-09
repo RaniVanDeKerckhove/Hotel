@@ -52,7 +52,13 @@ namespace Hotel.Presentation.Customer.Model
         private string _phone;
         public string Phone { get { return _phone; } set { _phone = value; OnPropertyChanged(); } }
 
-        public int NrOfMembers { get; set; }
+        private int _nrOfMembers;
+
+        public int NrOfMembers
+        {
+            get { return _nrOfMembers; }
+            set { _nrOfMembers = value; OnPropertyChanged(); }
+        }
 
         public string Municipality { get; private set; }
         public string ZipCode { get; private set; }
