@@ -7,18 +7,17 @@ using Hotel.Domain.Repositories;
 
 namespace Hotel.Persistence.Repositories
 {
-    // Repository class for handling data operations related to activities
+
     public class ActivityRepository : IActivityRepository
     {
         private readonly string databaseConnectionString;
 
-        // Constructor to initialize the database connection string
+        // intializeer connectionstring
         public ActivityRepository(string connectionString)
         {
             this.databaseConnectionString = connectionString;
         }
 
-        // Method to add a new activity to the database
         public void AddActivity(Activity activity)
         {
             try
@@ -60,7 +59,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to retrieve activities from the database based on a filter
         public List<Activity> GetActivities(string filter)
         {
             try
@@ -71,7 +69,7 @@ namespace Hotel.Persistence.Repositories
                              "FROM Activity a " +
                              "WHERE 1 = 1";
 
-                // Add the filter conditions
+                // filter 
                 if (!string.IsNullOrWhiteSpace(filter))
                 {
                     sql += " AND (a.Name LIKE @filter OR a.Description LIKE @filter OR a.Location LIKE @filter)";
@@ -83,7 +81,7 @@ namespace Hotel.Persistence.Repositories
                     conn.Open();
                     cmd.CommandText = sql;
 
-                    // Add parameter for the filter condition
+                    
                     if (!string.IsNullOrWhiteSpace(filter))
                     {
                         cmd.Parameters.AddWithValue("@filter", $"%{filter}%");
@@ -119,50 +117,8 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to retrieve an activity by its ID from the database
-        public Activity GetActivityByActivityId(int activityId)
-        {
-            Activity activity = null;
+        
 
-            string query = "SELECT * FROM Activity WHERE Id = @Id";
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(databaseConnectionString))
-                {
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Id", activityId);
-                    connection.Open();
-
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        if (reader["Discount"] == DBNull.Value)
-                        {
-                            activity = new Activity((int)reader["Id"], (string)reader["Name"],
-                                (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
-                                (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
-                                (decimal)reader["PriceChild"], 0, (string)reader["Location"]);
-
-                        }
-                        else
-                        {
-                            activity = new Activity((int)reader["Id"], (string)reader["Name"],
-                                (string)reader["Description"], (DateTime)reader["Date"], (int)reader["Duration"],
-                                (int)reader["AvailablePlaces"], (decimal)reader["PriceAdult"],
-                                (decimal)reader["PriceChild"], (decimal)reader["Discount"], (string)reader["Location"]);
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                throw ex;
-            }
-
-            return activity;
-        }
-
-        // Method to retrieve an activity by its ID from the database
         public Activity GetActivityById(int activityId)
         {
             try
@@ -209,7 +165,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to retrieve all activities from the database
         public List<Activity> GetAllActivities()
         {
             List<Activity> activities = new List<Activity>();
@@ -254,7 +209,6 @@ namespace Hotel.Persistence.Repositories
             return activities;
         }
 
-        // Method to remove an activity by its ID from the database
         public void RemoveActivityById(int activityId)
         {
             try

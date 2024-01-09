@@ -17,14 +17,38 @@ namespace Hotel.Presentation.Customer.Model
         }
         private const char splitChar = '-';
 
+        //public void SplitAddress(string addressLine)
+        //{
+        //    string[] parts = addressLine.Split(splitChar);
+        //    Municipality = parts[0];
+        //    Street = parts[2];
+        //    ZipCode = parts[1];
+        //    HouseNumber = parts[3];
+        //}
         public void SplitAddress(string addressLine)
         {
+            System.Diagnostics.Debug.WriteLine($"AddressLine before splitting: {addressLine}");
             string[] parts = addressLine.Split(splitChar);
-            Municipality = parts[0];
-            Street = parts[2];
-            ZipCode = parts[1];
-            HouseNumber = parts[3];
+
+            if (parts.Length >= 4) // Check if the array has enough elements
+            {
+                Municipality = parts[0];
+                ZipCode = parts[1];
+                Street = parts[2];
+                HouseNumber = parts[3];
+            }
+            else
+            {
+                // Handle the case where the array doesn't have enough elements
+                // You can throw an exception, log a warning, or take appropriate action.
+                // For now, setting default values:
+                Municipality = "Unknown";
+                ZipCode = "Unknown";
+                Street = "Unknown";
+                HouseNumber = "Unknown";
+            }
         }
+
 
         public CustomerUI()
         {

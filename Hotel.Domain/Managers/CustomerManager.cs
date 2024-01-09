@@ -22,7 +22,6 @@ namespace Hotel.Domain.Managers
             }
             catch (Exception ex)
             {
-                // Throw the custom exception without logging
                 throw new CustomerManagerException("Error in GetCustomers method of CustomerManager", ex);
             }
         }
@@ -34,7 +33,6 @@ namespace Hotel.Domain.Managers
             }
             catch (Exception ex)
             {
-                // Throw the custom exception without logging
                 throw new CustomerManagerException("Error in GetAllCustomers method of CustomerManager", ex);
             }
         }
@@ -48,7 +46,6 @@ namespace Hotel.Domain.Managers
             }
             catch (Exception ex)
             {
-                // Throw the custom exception without logging
                 throw new CustomerManagerException("Error in AddCustomer method of CustomerManager", ex);
             }
         }
@@ -57,7 +54,7 @@ namespace Hotel.Domain.Managers
         {
             try
             {
-                // Validate customer parameter
+                
                 if (customer == null)
                 {
                     throw new ArgumentNullException(nameof(customer), "Customer cannot be null.");
@@ -67,7 +64,7 @@ namespace Hotel.Domain.Managers
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately
+
                 throw new CustomerManagerException("Error in UpdateCustomer method of CustomerManager", ex);
             }
         }
@@ -81,7 +78,7 @@ namespace Hotel.Domain.Managers
             }
             catch (Exception ex)
             {
-                // Throw the custom exception without logging
+    
                 throw new CustomerManagerException("Error in RemoveCustomerById method of CustomerManager", ex);
             }
         }
@@ -93,7 +90,7 @@ namespace Hotel.Domain.Managers
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately
+        
                 throw new CustomerManagerException("Error in GetCustomerById method of CustomerManager", ex);
             }
         }
@@ -102,12 +99,10 @@ namespace Hotel.Domain.Managers
             try
             {
 
-                // Call the repository method to add a member to a customer
                 _customerRepository.AddMemberToCustomer(customerId, member);
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately
                 throw new CustomerManagerException("Error in AddMemberToCustomer method of CustomerManager", ex);
             }
         }

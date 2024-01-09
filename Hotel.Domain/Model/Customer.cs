@@ -8,11 +8,11 @@ namespace Hotel.Domain.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Address Address { get; set; }  // Add this property
+        public Address Address { get; set; } 
 
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public bool Status { get; set; } // Added Status property
+        public bool Status { get; set; } 
 
         public int NrOfMembers { get; private set; }
 
@@ -50,7 +50,7 @@ namespace Hotel.Domain.Model
             Email = email;
         }
 
-        public List<Member> Members { get; set; } // Change IReadOnlyList<Member> to List<Member>
+        public List<Member> Members { get; set; }
 
         public void AddMember(Member member)
         {

@@ -26,13 +26,12 @@ namespace Hotel.Presentation.Customer
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            // Clear the existing collection
+            // voorgaande ingegeven verijwderen
             customersUIs.Clear();
 
-            // Get the search text
             string searchText = SearchTextBox.Text;
 
-            // Filter customers based on the search text
+            // filter
             var filteredCustomers = customerManager.GetCustomers(searchText)
                 .Select(c => new CustomerUI(
                     c.Id,
@@ -40,10 +39,9 @@ namespace Hotel.Presentation.Customer
                     c.Email,
                     c.Address.ToString(),
                     c.PhoneNumber,
-                    c.NrOfMembers  // Use null-conditional operator to get the count, default to 0 if Members is null
+                    c.NrOfMembers  
                 ));
 
-            // Add filtered customers to the ObservableCollection
             foreach (var customerUI in filteredCustomers)
             {
                 customersUIs.Add(customerUI);
@@ -72,14 +70,12 @@ namespace Hotel.Presentation.Customer
 
                 try
                 {
-                    // Call the RemoveCustomerById method
                     customerManager.RemoveCustomerById(customerId);
                     customersUIs.Remove((CustomerUI)CustomerDataGrid.SelectedItem);
                     Refresh();
                 }
                 catch (CustomerManagerException ex)
                 {
-                    // Handle the exception or display an error message
                     MessageBox.Show($"Error deleting customer: {ex.Message}", "Error");
                 }
             }
@@ -114,21 +110,20 @@ namespace Hotel.Presentation.Customer
         }
         private void AddMemberButton_Click(object sender, RoutedEventArgs e)
         {
-            // Ensure a customer is selected
+            // customer is geselecteerd
             if (CustomerDataGrid.SelectedItem != null)
             {
-                // Get the selected customer
+                // neem de geselecteerde customer
                 CustomerUI selectedCustomer = (CustomerUI)CustomerDataGrid.SelectedItem;
 
-                // Open the MemberWindow to add a new member
+                // memberwindow openen
                 MemberWindow memberWindow = new MemberWindow();
                 if (memberWindow.ShowDialog() == true)
                 {
-                    // Extract DateTime value from the DatePicker
+
                     DateTime selectedDate = memberWindow.DatePicker.SelectedDate.GetValueOrDefault();
 
                    
-                    // Create a new Member object
                     Member newMember = new Member(
                                                memberWindow.NameTextBox.Text,
                                                                       DateOnly.FromDateTime(selectedDate)
@@ -136,16 +131,15 @@ namespace Hotel.Presentation.Customer
 
                     try
                     {
-                        // Add the new member to the selected customer
+                        // nieuw member toevoegen aan customer
                         customerManager.AddMemberToCustomer(selectedCustomer.Id ?? 0, newMember);
 
-                        // Refresh the UI to reflect the changes
                         GetDatabaseInfo();
                         Refresh();
                     }
                     catch (CustomerManagerException ex)
                     {
-                        // Handle the exception or display an error message
+                 
                         MessageBox.Show($"Error adding member: {ex.Message}", "Error");
                     }
                 }

@@ -8,18 +8,15 @@ using System.Linq;
 
 namespace Hotel.Persistence.Repositories
 {
-    // Repository class for handling data operations related to customers
     public class CustomerRepository : ICustomerRepository
     {
         private readonly string connectionString;
 
-        // Constructor to initialize the database connection string
         public CustomerRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        // Method to retrieve customers from the database based on a filter
         public List<Customer> GetCustomers(string filter)
         {
             try
@@ -82,7 +79,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to add a new customer to the database
         public void AddCustomer(Customer customer)
         {
             try
@@ -96,7 +92,6 @@ namespace Hotel.Persistence.Repositories
                     conn.Open();
                     cmd.CommandText = sql;
 
-                    // Add parameters
                     cmd.Parameters.AddWithValue("@Name", customer.Name);
                     cmd.Parameters.AddWithValue("@Email", customer.Email);
                     cmd.Parameters.AddWithValue("@PhoneNumber", customer.PhoneNumber);
@@ -107,7 +102,7 @@ namespace Hotel.Persistence.Repositories
 
                     int customerId = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    // Update the customer ID after insertion
+             
                     customer.Id = customerId;
                 }
             }
@@ -163,7 +158,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to remove a customer by their ID from the database
         public void RemoveCustomerById(int customerId)
         {
             try
@@ -186,7 +180,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to update customer details in the database
         public void UpdateCustomer(Customer customer)
         {
             try
@@ -202,7 +195,6 @@ namespace Hotel.Persistence.Repositories
                     conn.Open();
                     cmd.CommandText = sql;
 
-                    // Add parameters
                     cmd.Parameters.AddWithValue("@Id", customer.Id);
                     cmd.Parameters.AddWithValue("@Name", customer.Name);
                     cmd.Parameters.AddWithValue("@Email", customer.Email);
@@ -221,7 +213,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to retrieve all customers from the database
         public List<Customer> GetAllCustomers()
         {
             try
@@ -239,7 +230,6 @@ namespace Hotel.Persistence.Repositories
                     {
                         while (reader.Read())
                         {
-                            // Create a customer object and add it to the list
                             Customer customer = new Customer(
                                 id: Convert.ToInt32(reader["Id"]),
                                 name: reader["Name"].ToString(),
@@ -258,7 +248,7 @@ namespace Hotel.Persistence.Repositories
                     }
                 }
 
-                return customers;  // Return the list of customers
+                return customers;  
             }
             catch (Exception ex)
             {
@@ -266,18 +256,15 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to add a member to a customer in the database
         public void AddMemberToCustomer(int customerId, Member member)
         {
             try
             {
-                // Ensure that the member's birthdate is in the past
                 if (member.Birthday >= DateOnly.FromDateTime(DateTime.Now))
                 {
                     throw new CustomerRepositoryException("Member's birthdate should be in the past");
                 }
 
-                // Implement the logic to add a member to a customer
                 string sql = "INSERT INTO Member (CustomerId, Name, Birthday) " +
                              "VALUES (@CustomerId, @Name, @Birthday)";
 
@@ -287,7 +274,6 @@ namespace Hotel.Persistence.Repositories
                     conn.Open();
                     cmd.CommandText = sql;
 
-                    // Add parameters
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
                     cmd.Parameters.AddWithValue("@Name", member.Name);
                     cmd.Parameters.AddWithValue("@Birthday", member.Birthday.ToString("yyyy-MM-dd"));

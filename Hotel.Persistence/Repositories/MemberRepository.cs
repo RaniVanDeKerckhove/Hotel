@@ -8,18 +8,15 @@ using Hotel.Persistence.Exceptions;
 
 namespace Hotel.Persistence.Repositories
 {
-    // Repository class for handling data operations related to members
     public class MemberRepository : IMemberRepository
     {
         private readonly string connectionString;
 
-        // Constructor to initialize the database connection string
         public MemberRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        // Method to add a new member to the database
         public void AddMember(Member member)
         {
             try
@@ -44,7 +41,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to retrieve all members from the database
         public List<Member> GetAllMembers()
         {
             try
@@ -66,7 +62,7 @@ namespace Hotel.Persistence.Repositories
                             string name = (string)reader["Name"];
                             DateOnly birthday = DateOnly.FromDateTime((DateTime)reader["Birthday"]);
 
-                            Member member = new Member(customerId, name, birthday); // Replace with the actual constructor parameters from your Member class
+                            Member member = new Member(customerId, name, birthday); 
                             members.Add(member);
                         }
                     }
@@ -80,7 +76,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to retrieve members by their associated customer ID from the database
         public List<Member> GetMembersByCustomerId(int customerId)
         {
             try
@@ -99,7 +94,7 @@ namespace Hotel.Persistence.Repositories
                     {
                         while (reader.Read())
                         {
-                            int memberId = Convert.ToInt32(reader["CustomerId"]); // Assuming CustomerId is the member's ID
+                            int memberId = Convert.ToInt32(reader["CustomerId"]);
                             string name = (string)reader["Name"];
                             DateOnly birthday = DateOnly.FromDateTime((DateTime)reader["Birthday"]);
 
@@ -117,7 +112,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to remove a member by their ID from the database
         public void RemoveMemberById(int Id)
         {
             try

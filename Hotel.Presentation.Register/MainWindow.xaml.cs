@@ -8,22 +8,22 @@ using Hotel.Util;
 
 namespace Hotel.Presentation.Register
 {
-    // MainWindow class for handling registrations
+
     public partial class MainWindow : Window
     {
-        // Managers for handling data operations
+        // Managers 
         private RegistrationManager registrationManager;
         private CustomerManager customerManager;
         private ActivityManager activityManager;
         private MemberManager memberManager;
 
-        // Objects representing the current registration, customer, activity, and list of members
+        
         private Registration registration;
         private Customer customer;
         private Activity activity;
         private List<Member> members;
 
-        // Constructor for the MainWindow
+ 
         public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +31,7 @@ namespace Hotel.Presentation.Register
             PopulateComboBoxes();
         }
 
-        // Method to initialize data managers
+        //intializeer managers
         private void InitializeManagers()
         {
             registrationManager = new RegistrationManager(RepositoryFactory.RegistrationRepository);
@@ -40,14 +40,14 @@ namespace Hotel.Presentation.Register
             memberManager = new MemberManager(RepositoryFactory.MemberRepository);
         }
 
-        // Method to populate ComboBoxes with data
+        // vul comboboxen
         private void PopulateComboBoxes()
         {
             CustomerComboBox.ItemsSource = customerManager.GetCustomers(null);
             ActivitiesComboBox.ItemsSource = activityManager.GetActivities(null);
         }
 
-        // Event handler for the "Sign Up" button click
+      
         private void SignUpButton_Click(object sender, RoutedEventArgs e)
         {
             if (IsComboBoxSelectionEmpty(CustomerComboBox, ActivitiesComboBox))
@@ -67,7 +67,7 @@ namespace Hotel.Presentation.Register
             Close();
         }
 
-        // Method to check if ComboBox selections are empty
+        //combo check leeg
         private bool IsComboBoxSelectionEmpty(params ComboBox[] comboBoxes)
         {
             foreach (var comboBox in comboBoxes)
@@ -78,19 +78,19 @@ namespace Hotel.Presentation.Register
             return false;
         }
 
-        // Method to check if the capacity for the activity is exceeded
+        //aantalplaatsen check
         private bool IsCapacityExceeded()
         {
             return customer.Members.Count + 1 > activity.AvailablePlaces;
         }
 
-        // Method to show a message box
+      
         private void ShowMessageBox(string message)
         {
             MessageBox.Show(message);
         }
 
-        // Method to update registration details on the UI
+        // registratie update ui
         private void UpdateRegistrationDetails()
         {
             registration = new Registration(customer, activity);
@@ -116,7 +116,7 @@ namespace Hotel.Presentation.Register
             TotalCostTextBlock.Text = registration.Price.ToString();
         }
 
-        // Event handler for the Member CheckBox checked state
+        // member is aangeklikt
         private void MemberCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
@@ -129,7 +129,7 @@ namespace Hotel.Presentation.Register
             }
         }
 
-        // Event handler for the Member CheckBox unchecked state
+        // member is niet aangeklokt
         private void MemberCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
@@ -142,7 +142,7 @@ namespace Hotel.Presentation.Register
             }
         }
 
-        // Event handler for Customer ComboBox selection change
+        //customer combo
         private void CustomerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             members = new List<Member>();
@@ -154,7 +154,7 @@ namespace Hotel.Presentation.Register
             }
         }
 
-        // Event handler for Activities ComboBox selection change
+        // actitie combo
         private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             MembersCheckboxes.IsEnabled = true;

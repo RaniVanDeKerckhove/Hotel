@@ -11,30 +11,29 @@ namespace Hotel.Presentation.Customer
 {
     public partial class CustomerWindow : Window
     {
-        // Property to hold the CustomerUI data
+       
         public CustomerUI CustomerUI { get; set; }
 
-        // Managers for handling customer and member operations
+        // Managers 
         private CustomerManager customerManager;
         private MemberManager memberManager;
 
-        // Flag to determine if it's an update or a new customer
         private bool isUpdate;
 
-        // Constructor for the CustomerWindow
         public CustomerWindow(bool isUpdate, CustomerUI customerUI)
         {
             InitializeComponent();
 
-            // Initialize managers
+            // Initializeer managers
             customerManager = new CustomerManager(RepositoryFactory.CustomerRepository);
             memberManager = new MemberManager(RepositoryFactory.MemberRepository);
 
-            // Set the flag and initialize CustomerUI
+            //  initializeer CustomerUI
             this.isUpdate = isUpdate;
             this.CustomerUI = customerUI;
 
-            // If updating, populate the UI with existing customer data
+            // idien update
+            // geeft de textboxes de juiste waarden
             if (CustomerUI != null)
             {
                 IdTextBox.Text = CustomerUI.Id.ToString();
@@ -48,20 +47,19 @@ namespace Hotel.Presentation.Customer
             }
         }
 
-        // Event handler for the Cancel button click
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        // Event handler for the Add or Update button click
+        //add en update
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (CustomerUI == null)
                 {
-                    // Creating a new customer
+                    // nieuwe customer
                     Address address = new Address(CityTextBox.Text, StreetTextBox.Text, ZipTextBox.Text, HouseNumberTextBox.Text);
                     CustomerUI = new CustomerUI(
                         name: NameTextBox.Text,
@@ -71,7 +69,7 @@ namespace Hotel.Presentation.Customer
                         nrOfMembers: 0
                     );
 
-                    // Adding the new customer to the database
+                    // toevoegen aan de database
                     Domain.Model.Customer newCustomer = new Domain.Model.Customer
                     {
                         Name = CustomerUI.Name,
@@ -82,12 +80,13 @@ namespace Hotel.Presentation.Customer
 
                     customerManager.AddCustomer(newCustomer);
 
-                    // Retrieving the updated customer (including the generated ID)
+                    // ophalen van de customer uit de database
                     newCustomer = customerManager.GetCustomerById(newCustomer.Id);
 
-                    // Updating the CustomerUI with the database information
+                    // customUi update met info van de database
                     CustomerUI = new CustomerUI(
                         newCustomer.Id,
+
                         newCustomer.Name,
                         newCustomer.Email,
                         $"{newCustomer.Address.City}, {newCustomer.Address.Street}, {newCustomer.Address.PostalCode}, {newCustomer.Address.HouseNumber}",
@@ -97,12 +96,12 @@ namespace Hotel.Presentation.Customer
                 }
                 else
                 {
-                    // Updating an existing customer
+                    // update bestaande customer
                     CustomerUI.Email = EmailTextBox.Text;
-                    CustomerUI.Phone = PhoneTextBox.Text; // Update with the correct phone number
+                    CustomerUI.Phone = PhoneTextBox.Text; 
                     CustomerUI.Name = NameTextBox.Text;
 
-                    // Update the customer in the database
+                    // update customer in database
                     Domain.Model.Customer existingCustomer = customerManager.GetCustomerById(CustomerUI.Id ?? 0);
                     existingCustomer.Email = CustomerUI.Email;
                     existingCustomer.PhoneNumber = CustomerUI.Phone;
@@ -111,13 +110,12 @@ namespace Hotel.Presentation.Customer
                     customerManager.UpdateCustomer(existingCustomer);
                 }
 
-                // Setting the DialogResult to true to indicate success and closing the window
+                // succesvol
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                // Displaying an error message if an exception occurs
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

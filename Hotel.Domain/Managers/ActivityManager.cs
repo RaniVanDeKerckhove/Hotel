@@ -26,11 +26,7 @@ namespace Hotel.Domain.Managers
             return _activityRepository.GetActivities(filter);
         }
 
-        public Activity GetActivityByActivityId(int activityId)
-        {
-            return _activityRepository.GetActivityByActivityId(activityId);
-        }
-
+     
         public Activity GetActivityById(int activityId)
         {
             return _activityRepository.GetActivityById(activityId);

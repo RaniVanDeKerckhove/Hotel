@@ -12,7 +12,6 @@ namespace Hotel.Domain.Model
             this.registrationRepository = registrationRepository;
         }
 
-        // Add a new registration to the manager
         public void AddRegistration(Registration registration)
         {
             registrationRepository.AddRegistration(registration);

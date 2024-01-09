@@ -16,13 +16,14 @@ namespace Hotel.Presentation.Organizer
         {
             InitializeComponent();
             activityManager = new ActivityManager(RepositoryFactory.ActivityRepository);
+
         }
 
         private void AddActivity_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Check if all fields are filled
+                // Check alle velden ingevuld
                 if (string.IsNullOrWhiteSpace(NameTextBox.Text) ||
                     string.IsNullOrWhiteSpace(DescriptionTextBox.Text) ||
                     DatePicker.SelectedDate == null ||
@@ -39,7 +40,7 @@ namespace Hotel.Presentation.Organizer
                     return;
                 }
 
-                // Get values from the input fields
+                // neem waarden van texboxes
                 string name = NameTextBox.Text;
                 string description = DescriptionTextBox.Text;
                 DateTime date = DatePicker.SelectedDate ?? DateTime.Now;
@@ -53,17 +54,16 @@ namespace Hotel.Presentation.Organizer
                 decimal discount = Convert.ToDecimal(DiscountTextBox.Text);
                 string location = LocationTextBox.Text;
 
-                // Create the new Activity object
-                // Adjust the constructor parameters based on your Activity class
+                
                 Activity newActivity = new Activity( name, description, date, duration, availablePlaces, priceAdult, priceChild, discount, location);
 
-                // Add your logic to save the new activity to the database or perform other actions
+                //save database
                 activityManager.AddActivity(newActivity);
 
                 MessageBox.Show("Activity added successfully!");
 
 
-                // Optionally close the window after adding the activity
+        
                 Close();
             }
             catch (Exception ex)

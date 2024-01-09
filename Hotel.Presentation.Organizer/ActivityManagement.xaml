@@ -94,5 +94,6 @@
 
             <Button Content="Add Activity" Width="150" Height="40" Background="#4CAF50" Foreground="White" FontSize="16" BorderThickness="0" Click="AddActivity_Click"/>
         </StackPanel>
+
     </Grid>
 </Window>

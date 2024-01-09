@@ -47,32 +47,48 @@ namespace TestProject.Repositories
             // Cleanup
             repository.RemoveCustomerById(customer.Id);
         }
-        //remove test
 
 
         [Fact]
-        public void AddMemberToCustomer_ValidMember_ShouldAddMemberToCustomer()
+        public void UpdateCustomer_ShouldUpdateCustomerInDatabase()
         {
             // Arrange
-            var repository = new CustomerRepository(connectionString);
-            var member = new Member("John Doe", new DateOnly(1990, 1, 1));
-            var customerId = 55; // Replace this with the actual customer ID you want to use
+            int customerIdToUpdate = 65; 
+
+            CustomerRepository customerRepository = new CustomerRepository(connectionString);
+            Customer existingCustomer = customerRepository.GetCustomerById(customerIdToUpdate);
+
+            Assert.NotNull(existingCustomer);
+
+            existingCustomer.Name = "UpdatedName";
+            existingCustomer.Email = "updated@example.com";
+            existingCustomer.PhoneNumber = "987654321";
+            existingCustomer.Address.City = "UpdatedCity";
+            existingCustomer.Address.PostalCode = "54321";
+            existingCustomer.Address.Street = "UpdatedStreet";
+            existingCustomer.Address.HouseNumber = "123";
 
             // Act
-            repository.AddMemberToCustomer(customerId, member);
+            customerRepository.UpdateCustomer(existingCustomer);
 
             // Assert
-            var retrievedCustomer = repository.GetCustomerById(customerId);
-            Assert.NotNull(retrievedCustomer);
-            Assert.Equal(customerId, retrievedCustomer.Id); // Ensure the correct customer is retrieved
-            Assert.Equal(member.Name, retrievedCustomer.Members.First().Name); // Assuming Members is a collection
-            // Add more assertions if needed
-
-            // Cleanup (if necessary)
-            // repository.RemoveMemberFromCustomer(customerId, memberId);
+            Customer updatedCustomer = customerRepository.GetCustomerById(customerIdToUpdate);
+            Assert.NotNull(updatedCustomer);
+            Assert.Equal("UpdatedName", updatedCustomer.Name);
+            Assert.Equal("updated@example.com", updatedCustomer.Email);
+            Assert.Equal("987654321", updatedCustomer.PhoneNumber);
+            Assert.Equal("UpdatedCity", updatedCustomer.Address.City);
+            Assert.Equal("54321", updatedCustomer.Address.PostalCode);
+            Assert.Equal("UpdatedStreet", updatedCustomer.Address.Street);
+            Assert.Equal("123", updatedCustomer.Address.HouseNumber);
         }
 
 
+     
 
     }
 }
+
+
+
+

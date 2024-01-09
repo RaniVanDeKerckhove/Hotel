@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using Hotel.Domain.Model; // Update with your actual namespace
+using Hotel.Domain.Model; 
 using Hotel.Domain.Repositories;
 using Hotel.Persistence.Exceptions;
 
 namespace Hotel.Persistence.Repositories
 {
-    // Repository class for handling data operations related to organizers
     public class OrganizerRepository : IOrganizerRepository
     {
         private readonly string connectionString;
 
-        // Constructor to initialize the database connection string
         public OrganizerRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        // Method to add a new organizer to the database
         public void AddOrganizer(Organizer organizer)
         {
-            throw new NotImplementedException(); // Actual implementation is not provided in the code
+            throw new NotImplementedException(); 
         }
 
-        // Method to retrieve all organizers from the database with contact info and address
         public List<Organizer> GetAllOrganizers()
         {
             List<Organizer> organizers = new List<Organizer>();
 
-            // Query to get organizers with contact info and address
             string query = "SELECT o.[OrganizerId], o.[Name], ci.[Email], ci.[Phone], " +
                            "a.[City], a.[PostalCode], a.[Street], a.[HouseNumber] " +
                            "FROM [Hotel].[dbo].[Organizer] o " +
@@ -67,14 +62,12 @@ namespace Hotel.Persistence.Repositories
             }
             catch (SqlException ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error: {ex.Message}");
             }
 
             return organizers;
         }
 
-        // Method to retrieve an organizer by their ID from the database
         public Organizer GetOrganizerById(int organizerId)
         {
             try
@@ -124,7 +117,6 @@ namespace Hotel.Persistence.Repositories
             }
         }
 
-        // Method to remove an organizer by their ID from the database
         public void RemoveOrganizerById(int organizerId)
         {
             try
